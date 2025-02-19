@@ -6,8 +6,8 @@ public class Patient {
     private String telephoneNumber;
 
     // constructor -  to create a patient
-    public Patient(int uniqueID, String fullName, String address, String telephoneNumber) {
-        this.uniqueID = uniqueID;
+    public Patient(String fullName, String address, String telephoneNumber) {
+        this.uniqueID = uniqueID_generator.generateUniqueID();
         this.fullName = fullName;
         this.address = address;
         this.telephoneNumber = telephoneNumber;
@@ -30,12 +30,10 @@ public class Patient {
         return telephoneNumber;
     }
 
-    // method to display patients
-    public void displayPatientInfo() {
-        System.out.println("Patient's ID: " + uniqueID);
-        System.out.println("Full Name: " + fullName);
-        System.out.println("Address: " + address);
-        System.out.println("Telephone Number: " + telephoneNumber);
-        System.out.println("----------------------");
+// method to display patients
+    @Override
+    public String toString()
+    {
+        return "********Patient's Details ******* \n ID: " +this.uniqueID+ "\n Fullname: " +this.fullName + "\n Address : " +this.address + "\n Telephone Number : " +this.telephoneNumber;
     }
 }
