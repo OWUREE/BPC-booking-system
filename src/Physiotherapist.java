@@ -1,52 +1,31 @@
+import java.util.HashMap;
 import java.util.List;
+import models.*;
 
-public class Physiotherapist {
+public class Physiotherapist extends Personnel {
 
-    private int uniqueID;
-    private String fullName;
-    private String address;
-    private String telephoneNumber;
-    private List<String> expertise; // Areas of expertise
-    private String workingTimetable;
+    private String[] expertise; // Array of expertise
+    private HashMap<String, String> workingTimetable;
 
-    public Physiotherapist(String fullName, String address, String phoneNumber, List<String> expertise, String workingTimetable) {
-        this.uniqueID = uniqueID_generator.generateUniqueID();
-        this.fullName = fullName;
-        this.address = address;
-        this.telephoneNumber = phoneNumber;
+    public Physiotherapist(String fullName, String address, String telephoneNumber, String[] expertise) {
+        super(uniqueID_generator.generateUniqueID(), fullName, address, telephoneNumber);
         this.expertise = expertise;
-        this.workingTimetable = workingTimetable;
+        this.workingTimetable = new HashMap<>();
     }
 
-    public int getUniqueID() {
-        return uniqueID;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public String getPhoneNumber() {
-        return telephoneNumber;
-    }
-
-    public List<String> getExpertise() {
+    public String[] getExpertise() {
         return expertise;
     }
 
-    public String getWorkingTimetable() {
+    public HashMap<String, String> getWorkingTimetable() {
         return workingTimetable;
     }
 
     public void displayPhysiotherapistInfo() {
-        System.out.println("Physiotherapist ID: " + uniqueID);
-        System.out.println("Full Name: " + fullName);
-        System.out.println("Address: " + address);
-        System.out.println("Telephone Number: " + telephoneNumber);
+
+        System.out.println("\"********Physiotherapist Details ******* \\n \":");
+        System.out.println(this);
+
         System.out.println("Area of Expertise: " + String.join(", ", expertise));
         System.out.println("Timetable: " + workingTimetable);
         System.out.println("----------------------");
