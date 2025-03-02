@@ -1,4 +1,4 @@
-package patients;
+package personnelManagement;
 import models.*;
 
 public class Patient extends Personnel {
@@ -11,11 +11,11 @@ public class Patient extends Personnel {
     }
 
 
+    // to display a patient's info
     public void displayPatientInfo() {
         System.out.println("********Patient Details ******* \n ");
         System.out.println(this);
+//        super.toString();
     }
-
-
 
 }

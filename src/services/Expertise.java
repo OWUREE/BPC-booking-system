@@ -1,3 +1,5 @@
+package services;
+
 public class Expertise {
     private String expertiseName;
     private String[] treatmentList;
@@ -6,6 +8,7 @@ public class Expertise {
         this.expertiseName = expertiseName;
         this.treatmentList = treatmentList;
     }
+
 
     public String getExpertiseName() {
         return expertiseName;
@@ -18,5 +21,6 @@ public class Expertise {
     public String displayTreatments() {
         return String.join(", ", treatmentList); // Converts array to a readable string
     }
+
 
 }

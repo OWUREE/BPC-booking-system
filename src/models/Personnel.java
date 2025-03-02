@@ -1,5 +1,7 @@
 package models;
 
+import personnelManagement.*;
+
 public class Personnel {
     private final int uniqueID;
     private String fullName;
@@ -13,20 +15,22 @@ public class Personnel {
         this.telephoneNumber = telephoneNumber;
     }
 
-    public int getUniqueID() {
-        return uniqueID;
+    public String getUniqueID() {
+        if (this instanceof Physiotherapist) {
+            return "physio" + uniqueID;
+        }
+        else if (this instanceof Patient) {
+            return "pat" + uniqueID;
+        }
+        return String.valueOf(uniqueID);
     }
 
     public String getFullName() {
         return fullName;
     }
 
-    public String getAddress() {
-        return address;
-    }
+    public void cancelAppointment(){
 
-    public String getTelephoneNumber() {
-        return telephoneNumber;
     }
 
     @Override

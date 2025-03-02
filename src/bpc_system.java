@@ -1,9 +1,10 @@
 import java.util.*;
-import patients.*;
+import personnelManagement.*;
+import services.*;
 
 public class bpc_system {
 
-    private PatientManager patientManager = new PatientManager();
+    private PersonnelManager personnel = new PersonnelManager();
     Scanner input = new Scanner(System.in);
 
     // Hard-coded expertise data
@@ -18,6 +19,13 @@ public class bpc_system {
         System.out.println("- " + rehabilitation.getExpertiseName() + ": " + rehabilitation.displayTreatments());
     }
 
+    public void displayAllPhysioAppointments(PersonnelManager personnel) {
+        System.out.println("\n==== Available Physiotherapist Appointments ====\n");
+        for (Physiotherapist physio : personnel.getPhysioList()) {
+            physio.displayAvailableAppointments(); // Display available appointments
+        }
+    }
+
     public static void main(String[] args) {
         bpc_system system = new bpc_system();
 
@@ -28,28 +36,36 @@ public class bpc_system {
             System.out.println("2. View Appointments");
             System.out.println("3. Display Patients");
             System.out.println("4. Add Patient");
-            System.out.println("5. Remove Patient");
-            System.out.println("6. View treatment history");
-            System.out.println("7. Exit");
+            System.out.println("5. Add Physiotherapist");
+            System.out.println("6. Remove Patient");
+            System.out.println("7. View Appointment history");
+            System.out.println("8. Exit");
             System.out.print("Please select an option: ");
 
             int choice = system.input.nextInt();
             system.input.nextLine(); // Consume newline
 
             switch (choice) {
+                case 2:
+                    System.out.println("enter your unique id: ");
+                    String id = system.input.nextLine();
+//                    system.personnel.displayAppointmentByUniqueID();
                 case 3:
-                    system.patientManager.displayAllPatients();
+                    system.personnel.displayAllPatients();
                     break;
                 case 4:
-                    system.patientManager.addNewPatient();
+                    system.personnel.addNewPatient();
                     break;
                 case 5:
-                    system.patientManager.removePatient();
+                    system.personnel.removePatient();
                     break;
                 case 6:
                     system.displayExpertiseAndTreatments();
                     break;
                 case 7:
+                    system.displayAllPhysioAppointments(new PersonnelManager());
+                    break;
+                case 8:
                     system.exitProgram();
                     return;
                 default:
