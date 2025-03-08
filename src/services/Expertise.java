@@ -22,5 +22,4 @@ public class Expertise {
         return String.join(", ", treatmentList); // Converts array to a readable string
     }
 
-
 }

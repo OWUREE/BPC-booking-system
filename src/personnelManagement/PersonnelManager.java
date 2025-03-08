@@ -1,5 +1,7 @@
 package personnelManagement;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.*;
 
 import models.Date;
@@ -7,7 +9,8 @@ import services.*;
 import models.*;
 
 public class PersonnelManager {
-//    Date date = new Date(3, 10, 25, 11, 30);
+
+//    private static PersonnelManager instance;
 
     private List<Patient> patientList = new ArrayList<>();
     private List<Physiotherapist> physioList = new ArrayList<>();
@@ -26,24 +29,24 @@ public class PersonnelManager {
         Physiotherapist physio1 = (new Physiotherapist("Dr. Isaac Lee", "789 Maple St", "777-888-9999",
                 new Expertise[] { new Expertise("Physiotherapy", new String[]{"Massage", "Electrotherapy", "Acupuncture"}), new Expertise("Rehabilitation", new String[]{"Post-Surgery Recovery", "Sports Injury Rehab"})}));
 
-        Physiotherapist physio2 = (new Physiotherapist("Dr. Mark Gold", "321 Mosquito St", "111-222-3333",
+        Physiotherapist physio2 = (new Physiotherapist("Dr. Mark Gold", "321 Mosquito St", "557-272-4333",
                 new Expertise[] { new Expertise("Osteopathy", new String[]{"Spinal Manipulation", "Massage", "Acupuncture", "Stretching"}), new Expertise("Physiotherapy", new String[]{"Inversion therapy", "Mobilisation", "Manipulation"})}));
 
-        physioList.add(new Physiotherapist("Dr. Hui Cheng", "152 Harrow St", "174-252-3373",
+        Physiotherapist physio3 = (new Physiotherapist("Dr. Hui Cheng", "152 Harrow St", "174-252-3373",
                 new Expertise[] { new Expertise("Osteopathy", new String[]{"Spinal Manipulation", "Soft Tissue Therapy", "Stretching"}), new Expertise("Rehabilitation", new String[]{"Post-Surgery Recovery"})}));
 
-        physioList.add(new Physiotherapist("Dr. Steve Brown", "321 Albatrose St", "111-222-3333",
-                new Expertise[] { new Expertise("Physiotherapy", new String[]{"Massage", "Acupuncture"}) }));
+        Physiotherapist physio4 = (new Physiotherapist("Dr. Steve Brown", "321 Albatrose St", "111-222-3333",
+                new Expertise[] { new Expertise("Physiotherapy", new String[]{"Massage", "Acupuncture"})}));
 
-        Date appointmentDate = new Date(2025, 5, 1, "10:00", "11:00");
-        physio1.addAppointmentToTimetable(appointmentDate, "Massage");
-        physio2.addAppointmentToTimetable(appointmentDate, "Stretching");
+        Physiotherapist physio5 = (new Physiotherapist("Dr. Martin King", "27 Welwyn St", "567-222-8876",
+                new Expertise[] { new Expertise("Rehabilitation", new String[]{"Sports Injury Rehab", "Post-Surgery Recovery"})}));
 
         physioList.add(physio1);
         physioList.add(physio2);
+        physioList.add(physio3);
+        physioList.add(physio4);
+        physioList.add(physio5);
 
-        physio1.displayAvailableAppointments();
-        physio2.displayAvailableAppointments();
     }
 
     public void addNewPatient() {
@@ -120,17 +123,6 @@ public class PersonnelManager {
         
     }
 
-//    public void addAppointmentToPhysio(int physioID, Appointment appointment) {
-//        for (Physiotherapist physio : physioList) {
-//            if (physio.getUniqueID().equals(physioID)) {
-//                physio.addAppointmentToTimetable(appointment);
-//                System.out.println("Appointment added successfully for " + physio.getFullName());
-//                return;
-//            }
-//        }
-//        System.out.println("Physiotherapist with ID " + physioID + " not found.");
-//    }
-
     public void displayAllPhysiotherapists() {
         if (physioList.isEmpty()) {
             System.out.println("No physiotherapist found.");
@@ -172,6 +164,60 @@ public class PersonnelManager {
         } else {
             System.out.println("No physiotherapist found with that ID.");
         }
+    }
+
+    public List<Appointment> createAppointment() {
+        List<Appointment> allAppointments = new ArrayList<>();
+
+        String[] weekdays = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
+        String[] timeSlots = {"09:00-10:00", "10:30-11:30", "11:30-12:30", "14:00-15:00", "15:00-16:00", "16:00-17:00"};
+
+        List<Physiotherapist> physiotherapists = getPhysioList();
+
+        int year = 2025, month = 10;
+        LocalDate firstDayOfMonday = LocalDate.of(year, month, 1);
+
+        int firstMondayOffset = (DayOfWeek.MONDAY.getValue() - firstDayOfMonday.getDayOfWeek().getValue() + 7) % 7;
+        LocalDate firstMonday = firstDayOfMonday.plusDays(firstMondayOffset);
+
+        for (int week = 0; week < 4; week++) {
+            // Rotate the physiotherapists for variety (Optional)
+            Collections.rotate(physiotherapists, 3);
+
+
+        for (Physiotherapist physio : physiotherapists) {
+            physio.generateTimeTable();  // <-- This ensures every physio has a generated timetable
+        }
+
+        for (String day : weekdays) {
+            int dayOffset = Arrays.asList(weekdays).indexOf(day);
+            LocalDate actualDate = firstMonday.plusWeeks(week).plusDays(dayOffset);
+
+            Collections.shuffle(physiotherapists);
+
+            // Ensure that at least 3 physiotherapist work everyday
+            List<Physiotherapist> workingPhysio = physiotherapists.subList(0, 3);
+            int physioIndex = 0;
+
+            for (String timeSlot : timeSlots) {
+                String[] times = timeSlot.split("-");
+
+                // Assign a physiotherapist in a round-robin fashion
+                Physiotherapist physio = workingPhysio.get(physioIndex % 3);
+                physioIndex++;
+
+                String treatment = physio.getRandomTreatment(new Random());
+                Date appointmentDate = new Date(year, month, actualDate.getDayOfMonth(), times[0], times[1]);
+
+                // Create appointment and add it to physiotherapist timetable
+                Appointment appointment = new Appointment(0, physio, appointmentDate, treatment);
+                physio.addAppointmentToTimetable(appointmentDate, treatment);
+                allAppointments.add(appointment);
+                }
+            }
+        }
+        return allAppointments;
+
     }
 
     public List<Physiotherapist> getPhysioList() {

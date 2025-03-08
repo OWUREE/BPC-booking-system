@@ -14,8 +14,9 @@ public class Appointment {
     private Physiotherapist physio;
     private int patientID;
 
+
     public Appointment (int patientID, Physiotherapist physio, Date date, String treatment) {
-//        this.date = date;
+          this.date = date;
           this.ID = uniqueID_generator.generateUniqueID();
           this.treatment = treatment;
           this.patientID = patientID;
@@ -30,6 +31,33 @@ public class Appointment {
 
     public void setPatientID(int patientID) {
         this.patientID = patientID;
+    }
+
+    public void addAppointmentToTimetable() {
+
+    }
+
+    public void bookAnAppointment() {
+
+    }
+
+    public void cancelABooking() {
+
+    }
+
+    public void updateABooking() {
+
+    }
+
+    public void displayAvailableAppointmentsFor() {
+        if (physio.getWorkingTimetable().isEmpty()) {
+            System.out.println(physio.getFullName() + " has no available appointments.");
+            return;
+        }
+        System.out.println("Available appointments for " + physio.getFullName() + ":");
+        for (Appointment appointment : physio.getWorkingTimetable()) {
+            System.out.println(appointment);
+        }
     }
 
     public int getID() { return ID; }

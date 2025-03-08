@@ -6,22 +6,27 @@ import java.util.Locale;
 
 public class Date
 {
-    private int day, month, year;
+    private LocalDate date;
     private String startTime, endTime;
 
     public Date(int year, int month, int day, String startTime, String endTime) {
-        this.day = day;
-        this.month = month;
-        this.year = year;
+        this.date = LocalDate.of(year, month, day);
         this.startTime = startTime;
         this.endTime = endTime;
     }
 
-    public String formatDate() {
-        LocalDate localDate = LocalDate.of(year, month, day);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE d' 'MMMM yyyy, HH:mm");
-        String formattedDate = String.format(formatter.format(localDate), getDaySuffix(day));
-        return formattedDate + ", " + startTime + "-" + endTime;
+    @Override
+    public String toString() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE d MMMM yyyy");
+
+        int day = date.getDayOfMonth();
+        return date.format(DateTimeFormatter.ofPattern("EEEE")) +  " "
+                + day + getDaySuffix(day) + " " + date.format(DateTimeFormatter.ofPattern("MMMM yyyy")) +
+                ", " + startTime + "-" + endTime;
+    }
+
+    public int getDayOfTheMonth () {
+        return date.getDayOfMonth();
     }
 
     // Get suffix for the day (1st, 2nd, 3rd, etc.)
@@ -37,9 +42,6 @@ public class Date
         };
     }
 
-    public int getDay() { return day; }
-    public int getMonth() { return month; }
-    public int getYear() { return year; }
     public String getStartTime() { return startTime; }
     public String getEndTime() { return endTime; }
 }

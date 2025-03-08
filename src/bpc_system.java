@@ -4,8 +4,9 @@ import services.*;
 
 public class bpc_system {
 
-    private PersonnelManager personnel = new PersonnelManager();
+    PersonnelManager personnel = new PersonnelManager();
     Scanner input = new Scanner(System.in);
+
 
     // Hard-coded expertise data
     private Expertise physiotherapy = new Expertise("Physiotherapy", new String[]{"Massage", "Electrotherapy", "Acupuncture", "Inversion therapy", "Mobilisation", "Manipulation"});
@@ -34,12 +35,13 @@ public class bpc_system {
             System.out.println("\nMENU: ");
             System.out.println("1. Book an Appointment");
             System.out.println("2. View Appointments");
-            System.out.println("3. Display Patients");
+            System.out.println("3. Display Personnel");
             System.out.println("4. Add Patient");
-            System.out.println("5. Add Physiotherapist");
+//            System.out.println("5. Add Physiotherapist");
             System.out.println("6. Remove Patient");
-            System.out.println("7. View Appointment history");
-            System.out.println("8. Exit");
+            System.out.println("7. Print Appointment history");
+            System.out.println("8. All Physiotherapist Appointment");
+            System.out.println("9. Exit");
             System.out.print("Please select an option: ");
 
             int choice = system.input.nextInt();
@@ -66,11 +68,31 @@ public class bpc_system {
                     system.displayAllPhysioAppointments(new PersonnelManager());
                     break;
                 case 8:
+                    system.generatePhysioTimetablesAndCreateAppointments();
+                    break;
+                case 9:
                     system.exitProgram();
                     return;
                 default:
                     System.out.println("Invalid choice. Try again.");
             }
+        }
+    }
+
+    public void generatePhysioTimetablesAndCreateAppointments() {
+        // Generate timetables for each physiotherapist
+        for (Physiotherapist physio : personnel.getPhysioList()) {
+            physio.generateTimeTable();
+        }
+       List<Appointment> appointments = personnel.createAppointment(); // Create appointments based on generated timetables
+
+        if (!appointments.isEmpty()) {
+            System.out.println("Appointments have been created successfully!");
+            for (Appointment appointment : appointments) {
+                System.out.println(appointment); // Assuming Appointment has a suitable toString method
+            }
+        } else {
+            System.out.println("No appointments created.");
         }
     }
 
