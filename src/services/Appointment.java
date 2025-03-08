@@ -33,10 +33,6 @@ public class Appointment {
         this.patientID = patientID;
     }
 
-    public void addAppointmentToTimetable() {
-
-    }
-
     public void bookAnAppointment() {
 
     }

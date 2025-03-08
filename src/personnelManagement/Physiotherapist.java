@@ -30,6 +30,14 @@ public class Physiotherapist extends Personnel {
         return workingTimetable;
     }
 
+    // to display a patient's info
+    public void displayPhysiotherapistInfo() {
+        System.out.println("********Physiotherapist Details ******* \n ");
+        System.out.println(this);
+        System.out.println(Arrays.toString(expertise));
+//        super.toString();
+    }
+
     public String displayExpertise() {
         StringBuilder expertiseNames = new StringBuilder();
         for (Expertise expertise : expertise) {
@@ -88,7 +96,7 @@ public class Physiotherapist extends Personnel {
         workingTimetable.add(newAppointment);
     }
 
-    public void displayAvailableAppointments() {
+    public void displayAvailableAppointmentsByID() {
         if (workingTimetable.isEmpty()) {
             System.out.println(getFullName() + " has no available appointments.");
             return;

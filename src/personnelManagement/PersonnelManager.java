@@ -60,7 +60,6 @@ public class PersonnelManager {
         Patient newPatient = new Patient(fullName, address, telephoneNumber);
         patientList.add(newPatient);
         System.out.println("Patient added successfully. ID: " + newPatient.getUniqueID());
-//        System.out.println(date.getDate());
     }
 
     public void displayAllPatients() {
@@ -78,12 +77,13 @@ public class PersonnelManager {
         }
     }
 
-    public void displayAPatientUsingID() {
-        System.out.println("Enter the Unique ID of the patient:");
-        String idToShow = input.next();
-        Patient patientToShow = patientList.stream().filter(patient -> patient.getUniqueID().equals(idToShow)).findFirst().orElse(null);
+    public void displayAPatientUsingIDorFullName() {
+        System.out.println("Enter the Unique ID or Full name of the patient:");
+        String inputString = input.nextLine();
+
+        Patient patientToShow = patientList.stream().filter(patient -> patient.getUniqueID().equalsIgnoreCase(inputString) || patient.getFullName().equalsIgnoreCase(inputString)).findFirst().orElse(null);
         if (patientToShow == null) {
-            System.out.println("No patient found with that ID.");
+            System.out.println("No patient found with that ID or Name.");
         } else {
             patientToShow.displayPatientInfo();
         }
@@ -101,27 +101,37 @@ public class PersonnelManager {
         }
     }
 
-    public void addNewPhysiotherapist() {
-        System.out.println("Enter physiotherapist's full name: ");
-        String fullName = input.nextLine();
-        System.out.println("Enter physiotherapist's address: ");
-        String address = input.nextLine();
-        System.out.println("Enter physiotherapist's telephone number: ");
-        String telephoneNumber = input.nextLine();
-      
-        Expertise[] expertise = new Expertise[2];
-        for (int i = 0; i < expertise.length; i++) {
-            System.out.println("Enter expertise " + (i + 1) + ": ");
-            String expertiseName = input.nextLine();
-            System.out.println("Enter the list of treatments for " + expertiseName + ": ");
-            String[] treatments = input.nextLine().split(",");
-            expertise[i] = new Expertise(expertiseName, treatments);
+    public List<Expertise> getAllExpertise() {
+        Set<Expertise> expertiseSet = new HashSet<>();  // A Set to store unique expertise
+        for (Physiotherapist physio : physioList) {
+            expertiseSet.addAll(Arrays.asList(physio.getExpertise()));  // Add all expertise to the Set
         }
-        Physiotherapist newPhysiotherapist = new Physiotherapist(fullName, address, telephoneNumber, expertise);
-        physioList.add(newPhysiotherapist);
-        System.out.println("Physiotherapist added successfully. ID: " + newPhysiotherapist.getUniqueID());
-        
+
+        // Convert the Set back to a List if you need to return a List
+        return new ArrayList<>(expertiseSet);
     }
+
+//    public void addNewPhysiotherapist() {
+//        System.out.println("Enter physiotherapist's full name: ");
+//        String fullName = input.nextLine();
+//        System.out.println("Enter physiotherapist's address: ");
+//        String address = input.nextLine();
+//        System.out.println("Enter physiotherapist's telephone number: ");
+//        String telephoneNumber = input.nextLine();
+//
+//        Expertise[] expertise = new Expertise[2];
+//        for (int i = 0; i < expertise.length; i++) {
+//            System.out.println("Enter expertise " + (i + 1) + ": ");
+//            String expertiseName = input.nextLine();
+//            System.out.println("Enter the list of treatments for " + expertiseName + ": ");
+//            String[] treatments = input.nextLine().split(",");
+//            expertise[i] = new Expertise(expertiseName, treatments);
+//        }
+//        Physiotherapist newPhysiotherapist = new Physiotherapist(fullName, address, telephoneNumber, expertise);
+//        physioList.add(newPhysiotherapist);
+//        System.out.println("Physiotherapist added successfully. ID: " + newPhysiotherapist.getUniqueID());
+//
+//    }
 
     public void displayAllPhysiotherapists() {
         if (physioList.isEmpty()) {
@@ -138,33 +148,31 @@ public class PersonnelManager {
         }
     }
 
-    public void displayPhysioTreatmentsByFullName() {
-        System.out.println("Enter Physiotherapist's full name:");
-        String name = input.nextLine();
-        Physiotherapist physioToShow = physioList.stream().filter(physiotherapist -> physiotherapist.getFullName().equalsIgnoreCase(name)).findFirst().orElse(null);
+    public void displayPhysiotherapistByIDorFullName() {
+        System.out.println("Enter Physiotherapist's unique ID or full name:");
+        String inputString = input.nextLine();
+        Physiotherapist physioToShow = physioList.stream().filter(physiotherapist -> physiotherapist.getUniqueID().equalsIgnoreCase(inputString) || physiotherapist.getFullName().equalsIgnoreCase(inputString)).findFirst().orElse(null);
         if (physioToShow == null) {
-            System.out.println("No physiotherapist found with that name.");
+            System.out.println("No physiotherapist found with that name or ID.");
         }
         else {
-            // get and display treatment list
-            expertise = physioToShow.getExpertise();
-            for (Expertise expertise : expertise) {
-                System.out.println("Expertise: " + expertise.getExpertiseName());
-                System.out.println("Treatments: " + String.join(", ", expertise.getTreatmentList()));
+            // get and display physiotherapist
+            physioToShow.displayPhysiotherapistInfo();
             }
         }
-    }
 
-    public void removePhysiotherapist() {
-        System.out.println("Enter the Unique ID of the physiotherapist to remove:");
-        String idToRemove = input.next();
-        boolean removed = physioList.removeIf(physiotherapist -> physiotherapist.getUniqueID().equals(idToRemove));
-        if (removed) {
-            System.out.println("Physiotherapist with ID" + idToRemove + "removed successfully.");
-        } else {
-            System.out.println("No physiotherapist found with that ID.");
-        }
-    }
+
+
+//    public void removePhysiotherapist() {
+//        System.out.println("Enter the Unique ID of the physiotherapist to remove:");
+//        String idToRemove = input.next();
+//        boolean removed = physioList.removeIf(physiotherapist -> physiotherapist.getUniqueID().equals(idToRemove));
+//        if (removed) {
+//            System.out.println("Physiotherapist with ID" + idToRemove + "removed successfully.");
+//        } else {
+//            System.out.println("No physiotherapist found with that ID.");
+//        }
+//    }
 
     public List<Appointment> createAppointment() {
         List<Appointment> allAppointments = new ArrayList<>();

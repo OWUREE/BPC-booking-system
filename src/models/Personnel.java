@@ -29,9 +29,6 @@ public class Personnel {
         return fullName;
     }
 
-    public void cancelAppointment(){
-
-    }
 
     @Override
     public String toString()
