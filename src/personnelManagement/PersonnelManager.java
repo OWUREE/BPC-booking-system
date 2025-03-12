@@ -77,6 +77,15 @@ public class PersonnelManager {
         }
     }
 
+    public Patient findPatientByID(String IDInput) {
+        for (Patient patient : patientList) {
+            if (patient.getUniqueID().equalsIgnoreCase(IDInput)) {
+                return patient;
+            }
+        }
+        return  null;
+    }
+
     public void displayAPatientUsingIDorFullName() {
         System.out.println("Enter the Unique ID or Full name of the patient:");
         String inputString = input.nextLine();
@@ -101,6 +110,7 @@ public class PersonnelManager {
         }
     }
 
+    // Physiotherapist methods
     public List<Expertise> getAllExpertise() {
         Set<Expertise> expertiseSet = new HashSet<>();  // A Set to store unique expertise
         for (Physiotherapist physio : physioList) {
@@ -175,7 +185,8 @@ public class PersonnelManager {
 //    }
 
     public List<Appointment> createAppointment() {
-        List<Appointment> allAppointments = new ArrayList<>();
+
+        Appointment.getAllAppointment().clear(); // clear existing appointments to avoid duplicates
 
         String[] weekdays = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
         String[] timeSlots = {"09:00-10:00", "10:30-11:30", "11:30-12:30", "14:00-15:00", "15:00-16:00", "16:00-17:00"};
@@ -218,17 +229,25 @@ public class PersonnelManager {
                 Date appointmentDate = new Date(year, month, actualDate.getDayOfMonth(), times[0], times[1]);
 
                 // Create appointment and add it to physiotherapist timetable
-                Appointment appointment = new Appointment(0, physio, appointmentDate, treatment);
-                physio.addAppointmentToTimetable(appointmentDate, treatment);
-                allAppointments.add(appointment);
+                Appointment appointment = new Appointment("", physio, appointmentDate, treatment);
+                
+                // add appointment to the global list in appointment class
+                Appointment.getAllAppointment().add(appointment);
+
+                // add appointment to physiotherapist timetable
+                physio.getWorkingTimetable().add(appointment);
+
                 }
             }
         }
-        return allAppointments;
-
+        return new ArrayList<>(Appointment.getAllAppointment());  // return a copy
     }
 
     public List<Physiotherapist> getPhysioList() {
         return physioList;
+    }
+
+    public List<Patient> getPatientList() {
+        return patientList;
     }
 }

@@ -20,9 +20,6 @@ public class Expertise {
         return treatmentList.clone(); // Ensures data integrity - external code can't modify the data
     }
 
-    public String displayTreatments() {
-        return String.join(", ", treatmentList); // Converts array to a readable string
-    }
 
     @Override
     public boolean equals(Object o) {

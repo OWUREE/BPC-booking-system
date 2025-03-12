@@ -92,7 +92,7 @@ public class Physiotherapist extends Personnel {
 
 
     public void addAppointmentToTimetable(Date date, String treatment) {
-        Appointment newAppointment = new Appointment(0, this, date, treatment); // 0 = no patient yet
+        Appointment newAppointment = new Appointment("", this, date, treatment); // 0 = no patient yet
         workingTimetable.add(newAppointment);
     }
 

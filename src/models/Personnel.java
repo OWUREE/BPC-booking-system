@@ -29,7 +29,6 @@ public class Personnel {
         return fullName;
     }
 
-
     @Override
     public String toString()
     {

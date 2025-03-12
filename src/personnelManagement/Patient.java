@@ -2,11 +2,11 @@ package personnelManagement;
 import models.*;
 import services.Appointment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Patient extends Personnel {
 
-    private List<Appointment> bookings;
 
     // constructor -  to create a patient
     public Patient(String fullName, String address, String telephoneNumber) {
@@ -20,5 +20,16 @@ public class Patient extends Personnel {
         System.out.println(this);
 //        super.toString();
     }
+
+   public List<Appointment> getPatientBookings() {
+        List<Appointment> patientAppointments = new ArrayList<>();
+
+        for(Appointment appointment : Appointment.getAllAppointment()) {
+            if(appointment.getPatientID() != null && appointment.getPatientID().equals(this.getUniqueID())) {
+                patientAppointments.add(appointment);
+            }
+        }
+       return patientAppointments;
+  }
 
 }
