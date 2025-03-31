@@ -1,4 +1,4 @@
-package personnelManagement;
+package models;
 
 import java.time.DayOfWeek;
 import java.util.ArrayList;
@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Random;
 import java.time.LocalDate;
 
-import models.*;
 import services.*;
 
 public class Physiotherapist extends Personnel {
@@ -18,6 +17,7 @@ public class Physiotherapist extends Personnel {
         super(uniqueID_generator.generateUniqueID(), fullName, address, telephoneNumber);
         this.expertise = expertise;
         this.workingTimetable = new ArrayList<>();
+        generateTimeTable();
     }
 
 
@@ -27,6 +27,9 @@ public class Physiotherapist extends Personnel {
     }
 
     public ArrayList<Appointment> getWorkingTimetable() {
+        if (workingTimetable.isEmpty()) {
+            generateTimeTable();
+        }
         return workingTimetable;
     }
 
@@ -35,7 +38,6 @@ public class Physiotherapist extends Personnel {
         System.out.println("********Physiotherapist Details ******* \n ");
         System.out.println(this);
         System.out.println(Arrays.toString(expertise));
-//        super.toString();
     }
 
     public String displayExpertise() {
@@ -50,6 +52,9 @@ public class Physiotherapist extends Personnel {
     }
 
     public void generateTimeTable() {
+        if (!workingTimetable.isEmpty()) {
+            return; // Don't regenerate if already exists
+        }
         String[] weekdays = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
         String[] timeSlots = {"09:00-10:00", "10:30-11:30", "11:30-12:30", "14:00-15:00", "15:00-16:00", "16:00-17:00"};
 
@@ -71,11 +76,14 @@ public class Physiotherapist extends Personnel {
                 for (String timeSlot : timeSlots) {
                         String[] times = timeSlot.split("-");
 
+                    if (workingTimetable.isEmpty()) {
+                        // Generate and add appointments only if no appointments exist yet
                         String treatment = getRandomTreatment(random);
 
-                        Date appointmentDate = new Date(year, month,actualDate.getDayOfMonth(), times[0], times[1]);
+                        Date appointmentDate = new Date(year, month, actualDate.getDayOfMonth(), times[0], times[1]);
 
-                        addAppointmentToTimetable(appointmentDate, treatment); // call the method to add appointment to timetable
+                        addAppointmentToTimetable(appointmentDate, treatment); // Add to workingTimetable
+                    }
 
                     }
                 }

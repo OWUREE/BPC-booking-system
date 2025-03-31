@@ -1,16 +1,14 @@
-package personnelManagement;
+package services;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
-import models.Date;
-import services.*;
 import models.*;
+import models.Date;
 
 public class PersonnelManager {
-
-//    private static PersonnelManager instance;
 
     private List<Patient> patientList = new ArrayList<>();
     private List<Physiotherapist> physioList = new ArrayList<>();
@@ -104,7 +102,7 @@ public class PersonnelManager {
 
         boolean removed = patientList.removeIf(patient -> patient.getUniqueID().equals(idToRemove));
         if (removed) {
-            System.out.println("Patient with ID" + idToRemove + "removed successfully.");
+            System.out.println("Patient with ID" + idToRemove + " removed successfully.");
         } else {
             System.out.println("No patient found with that ID.");
         }
@@ -131,7 +129,7 @@ public class PersonnelManager {
 //
 //        Expertise[] expertise = new Expertise[2];
 //        for (int i = 0; i < expertise.length; i++) {
-//            System.out.println("Enter expertise " + (i + 1) + ": ");
+//            System.out.println("Enter expertise " + (is + 1) + ": ");
 //            String expertiseName = input.nextLine();
 //            System.out.println("Enter the list of treatments for " + expertiseName + ": ");
 //            String[] treatments = input.nextLine().split(",");
@@ -143,46 +141,43 @@ public class PersonnelManager {
 //
 //    }
 
+    private Physiotherapist findPhysiotherapistByIDOrName(String inputString) {
+        return physioList.stream()
+                .filter(physio -> physio.getUniqueID().equalsIgnoreCase(inputString) ||
+                        physio.getFullName().equalsIgnoreCase(inputString))
+                .findFirst()
+                .orElse(null);
+    }
+
     public void displayAllPhysiotherapists() {
         if (physioList.isEmpty()) {
             System.out.println("No physiotherapist found.");
             return;
         }
 
-        System.out.println("\"********Physiotherapist List *******\n");
+        System.out.println("********Physiotherapist List *******\n");
         int physioCounter = 1;
         for (Physiotherapist physio : physioList) {
             System.out.println(physioCounter);
             System.out.println(physio);
+            System.out.println(" Expertise:");
+            for (Expertise e : physio.getExpertise()) {
+                System.out.println("     - " + e.getExpertiseName() + ": " + String.join(", ", e.getTreatmentList()));
+            }
             physioCounter++;
         }
     }
 
-    public void displayPhysiotherapistByIDorFullName() {
-        System.out.println("Enter Physiotherapist's unique ID or full name:");
-        String inputString = input.nextLine();
-        Physiotherapist physioToShow = physioList.stream().filter(physiotherapist -> physiotherapist.getUniqueID().equalsIgnoreCase(inputString) || physiotherapist.getFullName().equalsIgnoreCase(inputString)).findFirst().orElse(null);
-        if (physioToShow == null) {
-            System.out.println("No physiotherapist found with that name or ID.");
+    public void removePhysiotherapist() {
+        System.out.println("Enter the Unique ID of the physiotherapist to remove:");
+        String idToRemove = input.next();
+        boolean removed = physioList.removeIf(physiotherapist -> physiotherapist.getUniqueID().equals(idToRemove));
+        if (removed) {
+            System.out.println("Physiotherapist with ID" + idToRemove + "removed successfully.");
+        } else {
+            System.out.println("No physiotherapist found with that ID.");
         }
-        else {
-            // get and display physiotherapist
-            physioToShow.displayPhysiotherapistInfo();
-            }
-        }
-
-
-
-//    public void removePhysiotherapist() {
-//        System.out.println("Enter the Unique ID of the physiotherapist to remove:");
-//        String idToRemove = input.next();
-//        boolean removed = physioList.removeIf(physiotherapist -> physiotherapist.getUniqueID().equals(idToRemove));
-//        if (removed) {
-//            System.out.println("Physiotherapist with ID" + idToRemove + "removed successfully.");
-//        } else {
-//            System.out.println("No physiotherapist found with that ID.");
-//        }
-//    }
+    }
 
     public List<Appointment> createAppointment() {
 
@@ -203,11 +198,6 @@ public class PersonnelManager {
             // Rotate the physiotherapists for variety (Optional)
             Collections.rotate(physiotherapists, 3);
 
-
-        for (Physiotherapist physio : physiotherapists) {
-            physio.generateTimeTable();  // <-- This ensures every physio has a generated timetable
-        }
-
         for (String day : weekdays) {
             int dayOffset = Arrays.asList(weekdays).indexOf(day);
             LocalDate actualDate = firstMonday.plusWeeks(week).plusDays(dayOffset);
@@ -216,32 +206,139 @@ public class PersonnelManager {
 
             // Ensure that at least 3 physiotherapist work everyday
             List<Physiotherapist> workingPhysio = physiotherapists.subList(0, 3);
-            int physioIndex = 0;
+//            int physioIndex = 0;
 
             for (String timeSlot : timeSlots) {
                 String[] times = timeSlot.split("-");
 
-                // Assign a physiotherapist in a round-robin fashion
-                Physiotherapist physio = workingPhysio.get(physioIndex % 3);
-                physioIndex++;
+                for (Physiotherapist physio : workingPhysio) {
 
-                String treatment = physio.getRandomTreatment(new Random());
-                Date appointmentDate = new Date(year, month, actualDate.getDayOfMonth(), times[0], times[1]);
+                    String treatment = physio.getRandomTreatment(new Random());
+                   Date appointmentDate = new Date(year, month, actualDate.getDayOfMonth(), times[0], times[1]);
 
-                // Create appointment and add it to physiotherapist timetable
-                Appointment appointment = new Appointment("", physio, appointmentDate, treatment);
-                
-                // add appointment to the global list in appointment class
-                Appointment.getAllAppointment().add(appointment);
+                  // Create appointment and add it to physiotherapist timetable
+                  Appointment appointment = new Appointment("", physio, appointmentDate, treatment);
 
-                // add appointment to physiotherapist timetable
-                physio.getWorkingTimetable().add(appointment);
+                        Appointment.getAllAppointment().add(appointment);
+                    physio.getWorkingTimetable().add(appointment);
+                    }
+                }
+                }
+            }
+        return new ArrayList<>(Appointment.getAllAppointment());  // return a copy
+    }
 
+    public void displayPhysioTimetableByIDorFullName() {
+        System.out.println("Enter Physiotherapist's unique ID or full name:");
+        String inputString = input.nextLine();
+        Physiotherapist physioToShow = findPhysiotherapistByIDOrName(inputString);
+        if (physioToShow == null) {
+            System.out.println("No physiotherapist found with that name or ID.");
+        }
+        else {
+            List<Appointment> timetable = physioToShow.getWorkingTimetable();
+
+            if (timetable.isEmpty()) {
+                System.out.println(physioToShow.getFullName() + " has no available appointments.");
+                return;
+            }
+            System.out.println("Available appointments for " + physioToShow.getFullName() + ":");
+            for (Appointment appointment : timetable) {
+                System.out.println(appointment.getDate() + " - " + appointment.getTreatment());
+            }
+        }
+    }
+
+    public void displayAPhysioAppointments() {
+        System.out.println("Enter Physiotherapist's unique ID or full name:");
+        String inputString = input.nextLine();
+        Physiotherapist physioToShow = findPhysiotherapistByIDOrName(inputString);
+        if (physioToShow == null) {
+            System.out.println("No physiotherapist found with that name or ID.");
+        }
+        else {
+            // get and display physiotherapist timetable
+            List<Appointment> bookedAppointment = physioToShow.getWorkingTimetable().stream().filter(appointment -> !appointment.getPatientID().isEmpty()).toList();
+
+            if (bookedAppointment.isEmpty()) {
+                System.out.println(physioToShow.getFullName() + " has no booked appointments.");
+                return;
+            }
+            System.out.println("********Booked appointments for " + physioToShow.getFullName() + "***********:");
+            int appointmentCounter = 1;
+
+            for (Appointment appointment : bookedAppointment) {
+                Patient patient =  findPatientByID(appointment.getPatientID());
+                String patientName = (patient != null) ? patient.getFullName() : "Unknown Patient";
+
+                System.out.println(appointmentCounter + "." + patientName + " - "  + appointment.getTreatment() + " on " + appointment.getDate());
+                appointmentCounter++;
+            }
+        }
+    }
+
+    public void printAppointmentReport() {
+        for (Physiotherapist physio : physioList) {
+            System.out.println("\nPhysiotherapist: " + physio.getFullName());
+
+            List<Appointment> appointments = physio.getWorkingTimetable();
+
+            for (AppointmentStatus status : AppointmentStatus.values()) {
+                if (status == AppointmentStatus.AVAILABLE) {
+                    continue; // Skip the AVAILABLE status
+                }
+
+                System.out.println("\n" + status + " appointments:");
+
+                // Filter appointments based on the given status (Booked, Cancelled, or Attended)
+                List<Appointment> filteredAppointments = appointments.stream()
+                        .filter(appointment -> appointment.getStatus() == status)
+                        .toList();
+
+                if (!filteredAppointments.isEmpty()) {
+                    // Print each appointment details
+                    for (Appointment appointment : filteredAppointments) {
+                        Patient patient = findPatientByID(appointment.getPatientID()); // Get the patient details
+                        String patientName = (patient != null) ? patient.getFullName() : "Unknown Patient";
+
+                        System.out.println("  Treatment: " + appointment.getTreatment());
+                        System.out.println("  Patient: " + patientName);
+                        System.out.println("  Time: " + appointment.getDate());
+                        System.out.println("  Status: " + status);
+                        System.out.println();
+                    }
+                } else {
+                    System.out.println("  No " + status + " appointments found.");
                 }
             }
         }
-        return new ArrayList<>(Appointment.getAllAppointment());  // return a copy
     }
+
+
+    public void printPhysiotherapistsByAttendedAppointments() {
+        System.out.println("********* Physiotherapist Ranking by Attended Appointments *********");
+
+        // Create a map to count attended appointments per physiotherapist
+        Map<Physiotherapist, Long> attendedCounts = new HashMap<>();
+
+        for (Physiotherapist physio : physioList) {
+            long attendedCount = physio.getWorkingTimetable().stream()
+                    .filter(appointment -> appointment.getStatus() == AppointmentStatus.ATTENDED)
+                    .count();
+            attendedCounts.put(physio, attendedCount);
+        }
+
+        // Sort physiotherapists by attended count in descending order
+        List<Map.Entry<Physiotherapist, Long>> sortedList = new ArrayList<>(attendedCounts.entrySet());
+        sortedList.sort((a, b) -> Long.compare(b.getValue(), a.getValue()));
+
+        for (int i = 0; i < sortedList.size(); i++) {
+            Physiotherapist physio = sortedList.get(i).getKey();
+            long count = sortedList.get(i).getValue();
+            System.out.println((i + 1) + ". " + physio.getFullName() + " - " + count);
+        }
+    }
+
 
     public List<Physiotherapist> getPhysioList() {
         return physioList;
@@ -250,4 +347,5 @@ public class PersonnelManager {
     public List<Patient> getPatientList() {
         return patientList;
     }
+
 }

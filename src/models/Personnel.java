@@ -1,6 +1,6 @@
 package models;
 
-import personnelManagement.*;
+import services.uniqueID_generator;
 
 public class Personnel {
     private final int uniqueID;
@@ -33,9 +33,9 @@ public class Personnel {
     public String toString()
     {
         return
-                "ID: " +this.uniqueID+ "\n " +
+                "ID: " +this.getUniqueID() + "\n " +
                 "Full Name: " +this.fullName + "\n " +
-                "Address : " +this.address + "\n " +
-                "Telephone Number : " +this.telephoneNumber;
+                "Address: " +this.address + "\n " +
+                "Telephone Number: " +this.telephoneNumber;
     }
 }

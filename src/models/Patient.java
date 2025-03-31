@@ -1,6 +1,5 @@
-package personnelManagement;
-import models.*;
-import services.Appointment;
+package models;
+import services.uniqueID_generator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +17,6 @@ public class Patient extends Personnel {
     public void displayPatientInfo() {
         System.out.println("********Patient Details ******* \n ");
         System.out.println(this);
-//        super.toString();
     }
 
    public List<Appointment> getPatientBookings() {

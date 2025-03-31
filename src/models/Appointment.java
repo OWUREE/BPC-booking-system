@@ -1,7 +1,6 @@
-package services;
+package models;
 
-import models.*;
-import personnelManagement.*;
+import services.uniqueID_generator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +16,10 @@ public class Appointment {
     private String treatment;
     private Physiotherapist physio;
     private String patientID;
+    private AppointmentStatus status;
 
-    private static List<Appointment> allAppointments = new ArrayList<>(); // stores all appointments
+    private static List<Appointment> allAppointments = new ArrayList<>();
+    private static List<Appointment> canceledAppointments = new ArrayList<>();// stores all appointments
 
 
     public Appointment (String patientID, Physiotherapist physio, Date date, String treatment) {
@@ -27,6 +28,7 @@ public class Appointment {
           this.treatment = treatment;
           this.patientID = patientID;
           this.physio = physio;
+          this.status = AppointmentStatus.AVAILABLE;
 
     }
 
@@ -43,7 +45,8 @@ public class Appointment {
     public int getID() { return ID; }
     public Date getDate() { return date; }
     public boolean isBooked() {
-        return patientID != null && !patientID.isEmpty();  // If patientID is set, it's booked
+//        return patientID != null && !patientID.isEmpty(); // If patientID is set, it's booked
+        return this.status == AppointmentStatus.BOOKED;
     }
     public String getTreatment() { return treatment; }
     public Physiotherapist getPhysiotherapist() { return physio; }
@@ -53,23 +56,55 @@ public class Appointment {
         return allAppointments;
     }
 
+    public static List<Appointment> getCanceledAppointments() {
+        return canceledAppointments;
+    }
+
+    public AppointmentStatus getStatus() {
+        return status;
+    }
+
     // Appointment Management
     public void bookAnAppointment(Patient patient) {
         if (this.isBooked()) {
-            System.out.println("Ooops, this appointment has already been booked");
-        }
-        else {
+            System.out.println("Oops, this appointment has already been booked");
+        } else if (patientHasConflictingAppointments(patient)) {
+            System.out.println("Oops, you already have an appointment at this time on this day. Please choose a different time.");
+        } else {
             this.setPatientID(patient.getUniqueID());
+            this.status = AppointmentStatus.BOOKED;
             System.out.println(this + "successfully booked for " + patient.getFullName() + "!");
         }
 
     }
 
     public void cancelABooking() {
-        this.patientID = null;
-        System.out.println(this + "successfully canceled.");
+        if(this.status != AppointmentStatus.BOOKED) {
+            System.out.println("This appointment is not currently booked");
+        }
+        else {
+            this.patientID = null;
+            this.status = AppointmentStatus.CANCELED;
+            canceledAppointments.add(this);
+            System.out.println(this + "successfully canceled.");
+        }
     }
 
+    public void attendAnAppointment() {
+                this.status = AppointmentStatus.ATTENDED;
+            System.out.println("Appointment with " +this.physio.getFullName() + " on " +this.date + " has been marked as attended." );
+        }
+
+    public boolean patientHasConflictingAppointments(Patient patient) {
+        List<Appointment> patientAppointments = patient.getPatientBookings();
+        for (Appointment appointment : patientAppointments) {
+
+            if (appointment.getDate().equals(this.date)) {
+                    return true;
+            }
+        }
+        return false;
+    }
     public void updateABooking(Patient patient, Appointment currentAppointment) {
 
         if (patient == null || currentAppointment == null) {
@@ -108,13 +143,12 @@ public class Appointment {
         currentAppointment.cancelABooking();
         newAppointment.bookAnAppointment(patient);
 
-        System.out.println("Your appointment has been updated to: " + newAppointment);
+//        System.out.println("Your appointment has been updated to: " + newAppointment);
     }
 
     public static List<Appointment> getAppointmentByExpertise(String expertiseName) {
         List<Appointment> filteredAppointments = new ArrayList<>();
 
-        // loop through all appointments
         for (Appointment appointment : allAppointments){
            Physiotherapist physio = appointment.getPhysiotherapist();
            for (Expertise expertise : physio.getExpertise()) {

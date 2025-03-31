@@ -2,7 +2,7 @@ package models;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
+import java.util.Objects;
 
 public class Date
 {
@@ -15,18 +15,14 @@ public class Date
         this.endTime = endTime;
     }
 
-    @Override
-    public String toString() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE d MMMM yyyy");
-
-        int day = date.getDayOfMonth();
-        return date.format(DateTimeFormatter.ofPattern("EEEE")) +  " "
-                + day + getDaySuffix(day) + " " + date.format(DateTimeFormatter.ofPattern("MMMM yyyy")) +
-                ", " + startTime + "-" + endTime;
-    }
-
     public int getDayOfTheMonth () {
         return date.getDayOfMonth();
+    }
+    public int getMonth() {
+        return date.getMonthValue();
+    }
+    public int getYear() {
+        return date.getYear();
     }
 
     // Get suffix for the day (1st, 2nd, 3rd, etc.)
@@ -44,5 +40,27 @@ public class Date
 
     public String getStartTime() { return startTime; }
     public String getEndTime() { return endTime; }
+
+    @Override
+    public String toString() {
+
+        int day = date.getDayOfMonth();
+        return date.format(DateTimeFormatter.ofPattern("EEEE")) +  " "
+                + day + getDaySuffix(day) + " " + date.format(DateTimeFormatter.ofPattern("MMMM yyyy")) +
+                ", " + startTime + "-" + endTime;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Date date1 = (Date) o;
+        return Objects.equals(date, date1.date) && Objects.equals(startTime, date1.startTime) && Objects.equals(endTime, date1.endTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(date, startTime, endTime);
+    }
 }
 

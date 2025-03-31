@@ -1,5 +1,9 @@
 import java.util.*;
-import personnelManagement.*;
+
+import models.Appointment;
+import models.Expertise;
+import models.Patient;
+import models.Physiotherapist;
 import services.*;
 
 public class bpc_system {
@@ -21,7 +25,7 @@ public class bpc_system {
             System.out.print("Please select an option: ");
 
             int choice = system.input.nextInt();
-            system.input.nextLine(); // Consume newline
+            system.input.nextLine();
 
             switch (choice) {
                 case 1: {
@@ -33,109 +37,117 @@ public class bpc_system {
                     int patientChoice = system.input.nextInt();
                     system.input.nextLine();
 
-               switch (patientChoice) {
-                   case 1:
-                       system.personnel.addNewPatient();
-                       break;
-                   case 2: {
-                       System.out.println("1. Book a treatment appointment");
-                       System.out.println("2. Manage appointments");
-                       System.out.println("3. Back");
-                       System.out.print("Please select an option: ");
+                    switch (patientChoice) {
+                        case 1:
+                            system.personnel.addNewPatient();
+                            break;
+                        case 2: {
+                            System.out.println("1. Book a treatment appointment");
+                            System.out.println("2. Manage appointments");
+                            System.out.println("3. Back");
+                            System.out.print("Please select an option: ");
 
-                       int existingPatientChoice = system.input.nextInt();
-                       system.input.nextLine();
+                            int existingPatientChoice = system.input.nextInt();
+                            system.input.nextLine();
 
-                       switch (existingPatientChoice) {
-                           case 1:{
-                               System.out.println("1. Book by expertise");
-                               System.out.println("2. Book by Physiotherapist name");
-                               System.out.println("3. Back");
-                               System.out.print("Please select an option: ");
+                            switch (existingPatientChoice) {
+                                case 1: {
+                                    System.out.println("1. Book by expertise");
+                                    System.out.println("2. Book by Physiotherapist name");
+                                    System.out.println("3. Back");
+                                    System.out.print("Please select an option: ");
 
-                               int bookAppointmentChoice = system.input.nextInt();
-                               system.input.nextLine();
+                                    int bookAppointmentChoice = system.input.nextInt();
+                                    system.input.nextLine();
 
 
-                               switch (bookAppointmentChoice) {
-                                   case 1: {
+                                    switch (bookAppointmentChoice) {
+                                        case 1: {
 
-                                       // Display available expertise
-                                       List<Appointment> availableAppointments = handleExpertiseAppointments(system);
+                                            // Display available expertise
+                                            List<Appointment> availableAppointments = handleExpertiseAppointments(system);
 
-                                       // After expertise is selected, handle available appointments
-                                       if (!availableAppointments.isEmpty()) {
-                                           handleBooking(system, availableAppointments);
-                                       } else {
-                                           System.out.println("No available appointments for the selected expertise.");
+                                            // After expertise is selected, handle available appointments
+                                            if (!availableAppointments.isEmpty()) {
+                                                handleBooking(system, availableAppointments);
+                                            } else {
+                                                System.out.println("No available appointments for the selected expertise.");
 
-                                       }
-                                       break;
-                                   }
-                                   case 2: {
-                                       List<Appointment> availableAppointments = handlePhysioAppointments(system);
+                                            }
+                                            break;
+                                        }
+                                        case 2: {
+                                            List<Appointment> availableAppointments = handlePhysioAppointments(system);
 
-                                       if (!availableAppointments.isEmpty()) {
-                                           handleBooking(system, availableAppointments);
-                                       } else {
-                                           System.out.println("No available appointments for the selected physiotherapist.");
-                                       }
-                                       break;
-                                   }
-                                   case 3: {
-                                       break;
-                                   }
-                                   default:
-                                       System.out.println("Invalid choice. Please try again.");
-                                       continue;
-                               }
-                               break;
-                           }
-                           case 2: {
-                               System.out.println("1. View all appointments");
-                               System.out.println("2. update an appointment");
-                               System.out.println("3. cancel an appointment");
-                               System.out.println("4. back");
-                               System.out.print("Please select an option: ");
+                                            if (!availableAppointments.isEmpty()) {
+                                                handleBooking(system, availableAppointments);
+                                            } else {
+                                                System.out.println("No available appointments for the selected physiotherapist.");
+                                            }
+                                            break;
+                                        }
+                                        case 3: {
+                                            break;
+                                        }
+                                        default:
+                                            System.out.println("Invalid choice. Please try again.");
+                                            continue;
+                                    }
+                                    break;
+                                }
+                                case 2: {
+                                    System.out.println("1. View all appointments");
+                                    System.out.println("2. Update an appointment");
+                                    System.out.println("3. Cancel an appointment");
+                                    System.out.println("4. Attend an appointment");
+                                    System.out.println("5. back");
+                                    System.out.print("Please select an option: ");
 
-                               int manageAppointmentChoice = system.input.nextInt();
-                               system.input.nextLine();
+                                    int manageAppointmentChoice = system.input.nextInt();
+                                    system.input.nextLine();
 
-                               switch (manageAppointmentChoice) {
-                                   case 1:
-                                       promptPatientIDForBookings(system);
-                                       break;
-                                   case 2: {
-                                       Appointment selectedAppointment = handleFindAndSelectAppointment(system, "update");
-                                       if (selectedAppointment != null) {
-                                           Patient patient = system.personnel.findPatientByID(selectedAppointment.getPatientID());
-                                           selectedAppointment.updateABooking(patient, selectedAppointment);
-                                       }
-                                       break;
-                                   }
-                                   case 3: {
-                                       Appointment selectedAppointment = handleFindAndSelectAppointment(system, "cancel");
-                                       if (selectedAppointment != null) {
-                                           selectedAppointment.cancelABooking();
-                                       }
-                                       break;
-                                   }
-                                   default:
-                                       System.out.println("Invalid choice. Please try again.");
-                                       continue;
-                               }
-                           }
-                           case 3:
-                               break;
-                           default:
-                               System.out.println("Invalid choice. Please try again.");
-                               continue;
-                       }
-                       break;
-                   }
+                                    switch (manageAppointmentChoice) {
+                                        case 1:
+                                            promptPatientIDForBookings(system);
+                                            break;
+                                        case 2: {
+                                            Appointment selectedAppointment = handleFindAndSelectAppointment(system, "update");
+                                            if (selectedAppointment != null) {
+                                                Patient patient = system.personnel.findPatientByID(selectedAppointment.getPatientID());
+                                                selectedAppointment.updateABooking(patient, selectedAppointment);
+                                            }
+                                            break;
+                                        }
+                                        case 3: {
+                                            Appointment selectedAppointment = handleFindAndSelectAppointment(system, "cancel");
+                                            if (selectedAppointment != null) {
+                                                selectedAppointment.cancelABooking();
+                                            }
+                                            break;
+                                        }
+                                        case 4: {
+                                            Appointment selectedAppointment = handleFindAndSelectAppointment(system, "attend");
+                                            if (selectedAppointment != null) {
+                                                selectedAppointment.attendAnAppointment();
+                                            }
+                                            break;
+                                        }
+                                        default:
+                                            System.out.println("Invalid choice. Please try again.");
+                                            continue;
+                                    }
+                                }
+                                case 3:
+                                    break;
+                                default:
+                                    System.out.println("Invalid choice. Please try again.");
+                                    continue;
+                            }
+                            break;
+                        }
 
-               }
-               break;
+                    }
+                    break;
                 }
                 case 2: {
                     System.out.println("1. View Timetable");
@@ -146,22 +158,85 @@ public class bpc_system {
                     int physiotherapistChoice = system.input.nextInt();
                     system.input.nextLine(); // Consume newline
 
-//                    switch (physiotherapistChoice) {
-//                        case 1:
+                    switch (physiotherapistChoice) {
+                        case 1:
+                            system.personnel.displayPhysioTimetableByIDorFullName();
+                            break;
+                        case 2:
+                            system.personnel.displayAPhysioAppointments();
+                            break;
+                        case 3:
+                            break;
+                    }
+                    break;
                 }
                 case 3: {
                     System.out.println("1. Manage Personnel");
-                    System.out.println("2. Print appointment history");
-                    System.out.println("4. Back");
+                    System.out.println("2. Print Report");
+                    System.out.println("3. Back");
                     System.out.print("Please select an option: ");
 
 
                     int adminChoice = system.input.nextInt();
-                    system.input.nextLine(); // Consume newline
+                    system.input.nextLine();
 
-//                    switch (adminChoice) {
-//                        case 1:
+                    switch (adminChoice) {
+                        case 1: {
+                            System.out.println("1. Add a Patient");
+                            System.out.println("2. Remove a Patient");
+                            System.out.println("3. View all physiotherapists");
+                            System.out.println("4. Remove a Physiotherapist");
+                            System.out.println("5. Exit");
+                            System.out.print("Please select an option: ");
+
+                            int managePersonnelChoice = system.input.nextInt();
+                            system.input.nextLine();
+
+                            switch(managePersonnelChoice) {
+                                case 1: system.personnel.addNewPatient();
+                                    break;
+                                case 2: system.personnel.removePatient();
+                                break;
+                                case 3: system.personnel.displayAllPhysiotherapists();
+                                    break;
+                                case 4: system.personnel.removePhysiotherapist();
+                                break;
+                                case 5:
+                                    system.exitProgram();
+                                    return;
+
+                                default:
+                            }
+                        }
+                        break;
+                        case 2: {
+                            System.out.println("1. List all treatment appointment");
+                            System.out.println("2. Print Appointment history");
+                            System.out.println("3. Back");
+                            System.out.print("Please select an option: ");
+
+                            int printReportChoice = system.input.nextInt();
+                            system.input.nextLine();
+
+                            switch (printReportChoice) {
+                                case 1: system.personnel.printAppointmentReport();
+                                    break;
+                                case 2: system.personnel.printPhysiotherapistsByAttendedAppointments();
+                                    break;
+                                case 3:
+                                    break;
+                                default:
+                                    System.out.println("Invalid choice. Try again.");
+                            }
+                        }
+                        break;
+                        case 3:
+                        break;
+                        default:
+                            System.out.println("Invalid choice. Try again.");
                 }
+                break;
+            }
                 case 4:
                     system.exitProgram();
                     return;
@@ -269,27 +344,6 @@ public class bpc_system {
             System.out.println("Invalid patient ID. Could not book the appointment.");
         }
     }
-
-//    public void handleUpdateAppointment(bpc_system system, List<Appointment> availableAppointments) {
-//        List<Expertise> expertiseList = system.personnel.getAllExpertise();
-//        System.out.println("Available treatments");
-//        for (int i = 0; i < expertiseList.size(); i++) {
-//            System.out.println((i + 1) + ". " + expertiseList.get(i).getExpertiseName());
-//        }
-//        System.out.print("Select a new : ");
-//        int expertiseChoice = system.input.nextInt();
-//        system.input.nextLine();
-//
-//        if (expertiseChoice > 0 && expertiseChoice <= expertiseList.size()) {
-//            String selectedExpertise = expertiseList.get(expertiseChoice - 1).getExpertiseName();
-//            List<Appointment> availableAppointments = Appointment.getAppointmentByExpertise(selectedExpertise);
-//            System.out.println(selectedExpertise + " appointments Found -> " + availableAppointments.size());
-//            return availableAppointments;
-//        } else {
-//            System.out.println("Invalid expertise choice.");
-//            return new ArrayList<>();
-//        }
-//    }
 
     private static Appointment handleFindAndSelectAppointment(bpc_system system, String action) { // action is either to update or to cancel
         System.out.println("Please enter your patient ID:");
