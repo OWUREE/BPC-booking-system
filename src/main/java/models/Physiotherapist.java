@@ -40,17 +40,6 @@ public class Physiotherapist extends Personnel {
         System.out.println(Arrays.toString(expertise));
     }
 
-    public String displayExpertise() {
-        StringBuilder expertiseNames = new StringBuilder();
-        for (Expertise expertise : expertise) {
-            expertiseNames.append(expertise.getExpertiseName()).append(", ");
-        }
-        return !expertiseNames.isEmpty()
-                ? expertiseNames.substring(0, expertiseNames.length() - 2)
-                : "No Expertise";
-
-    }
-
     public void generateTimeTable() {
         if (!workingTimetable.isEmpty()) {
             return; // Don't regenerate if already exists
@@ -102,17 +91,6 @@ public class Physiotherapist extends Personnel {
     public void addAppointmentToTimetable(Date date, String treatment) {
         Appointment newAppointment = new Appointment("", this, date, treatment); // 0 = no patient yet
         workingTimetable.add(newAppointment);
-    }
-
-    public void displayAvailableAppointmentsByID() {
-        if (workingTimetable.isEmpty()) {
-            System.out.println(getFullName() + " has no available appointments.");
-            return;
-        }
-        System.out.println("Available appointments for " + getFullName() + ":");
-        for (Appointment appointment : workingTimetable) {
-            System.out.println(appointment);
-        }
     }
 
 }

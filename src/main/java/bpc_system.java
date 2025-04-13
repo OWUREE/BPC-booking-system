@@ -39,7 +39,7 @@ public class bpc_system {
 
                     switch (patientChoice) {
                         case 1:
-                            system.personnel.addNewPatient();
+                            system.promptForNewPatientDetails();
                             break;
                         case 2: {
                             System.out.println("1. Book a treatment appointment");
@@ -185,23 +185,30 @@ public class bpc_system {
                             System.out.println("1. Add a Patient");
                             System.out.println("2. Remove a Patient");
                             System.out.println("3. View all physiotherapists");
-                            System.out.println("4. Remove a Physiotherapist");
-                            System.out.println("5. Exit");
+                            System.out.println("4. View a Patient's details");
+                            System.out.println("5. View all Patients");
+                            System.out.println("6. Exit");
                             System.out.print("Please select an option: ");
 
                             int managePersonnelChoice = system.input.nextInt();
                             system.input.nextLine();
 
                             switch(managePersonnelChoice) {
-                                case 1: system.personnel.addNewPatient();
+                                case 1: system.promptForNewPatientDetails();
                                     break;
-                                case 2: system.personnel.removePatient();
-                                break;
+                                case 2: {
+                                    System.out.println("Enter the Unique ID of the patient to remove:");
+                                    String idToRemove = system.input.nextLine();
+                                    system.personnel.removePatientByID(idToRemove);
+                                    break;
+                                }
                                 case 3: system.personnel.displayAllPhysiotherapists();
                                     break;
-                                case 4: system.personnel.removePhysiotherapist();
+                                case 4: system.personnel.displayAPatientUsingIDorFullName();
                                 break;
-                                case 5:
+                                case 5: system.personnel.displayAllPatients();
+                                    break;
+                                case 6:
                                     system.exitProgram();
                                     return;
 
@@ -379,6 +386,48 @@ public class bpc_system {
         System.out.println("You selected: " + selectedAppointment);
         return selectedAppointment;
     }
+
+    private void promptForNewPatientDetails() {
+        String fullName;
+        while (true) {
+            System.out.print("Enter full name of the new patient: ");
+            fullName = input.nextLine();
+            if (fullName == null || fullName.trim().isEmpty()) {
+                System.out.println("Full name cannot be empty. Please try again.");
+            } else {
+                break;
+            }
+        }
+
+        String address;
+        while (true) {
+            System.out.print("Enter address of the new patient: ");
+            address = input.nextLine();
+            if (address == null || address.trim().isEmpty()) {
+                System.out.println("Address cannot be empty. Please try again.");
+            } else {
+                break;
+            }
+        }
+
+
+        String telephoneNumber;
+        while (true) {
+            System.out.print("Enter telephone number of the new patient: ");
+            telephoneNumber = input.nextLine();
+            if (telephoneNumber == null || telephoneNumber.trim().isEmpty()) {
+                System.out.println("Telephone number cannot be empty. Please try again.");
+            } else if (!telephoneNumber.matches("^\\+?\\d+$")) { // Regular expression for valid phone number
+                System.out.println("Telephone number must contain only digits.");
+            } else {
+                break;
+            }
+        }
+        // Call addNewPatient with the user input
+        personnel.addNewPatient(fullName, address, telephoneNumber);
+
+    }
+
 
     public void exitProgram() {
         input.close();

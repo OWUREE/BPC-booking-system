@@ -15,16 +15,6 @@ public class Date
         this.endTime = endTime;
     }
 
-    public int getDayOfTheMonth () {
-        return date.getDayOfMonth();
-    }
-    public int getMonth() {
-        return date.getMonthValue();
-    }
-    public int getYear() {
-        return date.getYear();
-    }
-
     // Get suffix for the day (1st, 2nd, 3rd, etc.)
     private String getDaySuffix(int day) {
         if (day >= 11 && day <= 13) {
@@ -37,9 +27,6 @@ public class Date
             default -> "th";
         };
     }
-
-    public String getStartTime() { return startTime; }
-    public String getEndTime() { return endTime; }
 
     @Override
     public String toString() {

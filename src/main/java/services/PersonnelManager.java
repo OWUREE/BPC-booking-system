@@ -47,16 +47,14 @@ public class PersonnelManager {
 
     }
 
-    public void addNewPatient() {
-        System.out.println("Enter patient's full name: ");
-        String fullName = input.nextLine();
-        System.out.println("Enter patient's address: ");
-        String address = input.nextLine();
-        System.out.println("Enter patient's telephone number: ");
-        String telephoneNumber = input.nextLine();
+    public void addNewPatient(String fullName, String address, String telephoneNumber) {
+        // Assuming that the inputs passed to this method are already validated in the runner class.
 
+        // Create a new patient instance using the validated data
         Patient newPatient = new Patient(fullName, address, telephoneNumber);
+
         patientList.add(newPatient);
+
         System.out.println("Patient added successfully. ID: " + newPatient.getUniqueID());
     }
 
@@ -96,16 +94,14 @@ public class PersonnelManager {
         }
     }
 
-    public void removePatient() {
-        System.out.println("Enter the Unique ID of the patient to remove:");
-        String idToRemove = input.next();
-
+    public boolean removePatientByID(String idToRemove) {
         boolean removed = patientList.removeIf(patient -> patient.getUniqueID().equals(idToRemove));
         if (removed) {
-            System.out.println("Patient with ID" + idToRemove + " removed successfully.");
+            System.out.println("Patient with ID " + idToRemove + " removed successfully.");
         } else {
             System.out.println("No patient found with that ID.");
         }
+        return removed;
     }
 
     // Physiotherapist methods
@@ -118,28 +114,6 @@ public class PersonnelManager {
         // Convert the Set back to a List if you need to return a List
         return new ArrayList<>(expertiseSet);
     }
-
-//    public void addNewPhysiotherapist() {
-//        System.out.println("Enter physiotherapist's full name: ");
-//        String fullName = input.nextLine();
-//        System.out.println("Enter physiotherapist's address: ");
-//        String address = input.nextLine();
-//        System.out.println("Enter physiotherapist's telephone number: ");
-//        String telephoneNumber = input.nextLine();
-//
-//        Expertise[] expertise = new Expertise[2];
-//        for (int i = 0; i < expertise.length; i++) {
-//            System.out.println("Enter expertise " + (is + 1) + ": ");
-//            String expertiseName = input.nextLine();
-//            System.out.println("Enter the list of treatments for " + expertiseName + ": ");
-//            String[] treatments = input.nextLine().split(",");
-//            expertise[i] = new Expertise(expertiseName, treatments);
-//        }
-//        Physiotherapist newPhysiotherapist = new Physiotherapist(fullName, address, telephoneNumber, expertise);
-//        physioList.add(newPhysiotherapist);
-//        System.out.println("Physiotherapist added successfully. ID: " + newPhysiotherapist.getUniqueID());
-//
-//    }
 
     private Physiotherapist findPhysiotherapistByIDOrName(String inputString) {
         return physioList.stream()
@@ -165,17 +139,6 @@ public class PersonnelManager {
                 System.out.println("     - " + e.getExpertiseName() + ": " + String.join(", ", e.getTreatmentList()));
             }
             physioCounter++;
-        }
-    }
-
-    public void removePhysiotherapist() {
-        System.out.println("Enter the Unique ID of the physiotherapist to remove:");
-        String idToRemove = input.next();
-        boolean removed = physioList.removeIf(physiotherapist -> physiotherapist.getUniqueID().equals(idToRemove));
-        if (removed) {
-            System.out.println("Physiotherapist with ID" + idToRemove + "removed successfully.");
-        } else {
-            System.out.println("No physiotherapist found with that ID.");
         }
     }
 
@@ -339,6 +302,9 @@ public class PersonnelManager {
         }
     }
 
+    public void setPhysioList(List<Physiotherapist> physioList) {
+        this.physioList = physioList;
+    }
 
     public List<Physiotherapist> getPhysioList() {
         return physioList;
