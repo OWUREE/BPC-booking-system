@@ -55,7 +55,7 @@ public class PersonnelManager {
 
         patientList.add(newPatient);
 
-        System.out.println("Patient added successfully. ID: " + newPatient.getUniqueID());
+        System.out.println("\u001B[35mPatient added successfully. ID: " + newPatient.getUniqueID() + "\u001B[0m");
     }
 
     public void displayAllPatients() {
@@ -142,24 +142,32 @@ public class PersonnelManager {
         }
     }
 
-    public List<Appointment> createAppointment() {
 
-        Appointment.getAllAppointment().clear(); // clear existing appointments to avoid duplicates
+public List<Appointment> createAppointment() {
 
-        String[] weekdays = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
-        String[] timeSlots = {"09:00-10:00", "10:30-11:30", "11:30-12:30", "14:00-15:00", "15:00-16:00", "16:00-17:00"};
+    Appointment.getAllAppointment().clear(); // Clear existing appointments to avoid duplicates
 
-        List<Physiotherapist> physiotherapists = getPhysioList();
+    String[] weekdays = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
+    String[] timeSlots = {"09:00-10:00", "10:30-11:30", "11:30-12:30", "14:00-15:00", "15:00-16:00", "16:00-17:00"};
 
-        int year = 2025, month = 10;
-        LocalDate firstDayOfMonday = LocalDate.of(year, month, 1);
+    List<Physiotherapist> physiotherapists = getPhysioList();
 
-        int firstMondayOffset = (DayOfWeek.MONDAY.getValue() - firstDayOfMonday.getDayOfWeek().getValue() + 7) % 7;
-        LocalDate firstMonday = firstDayOfMonday.plusDays(firstMondayOffset);
+    for (Physiotherapist physio : physiotherapists) {
+        physio.getWorkingTimetable().clear();
+    }
 
-        for (int week = 0; week < 4; week++) {
-            // Rotate the physiotherapists for variety (Optional)
-            Collections.rotate(physiotherapists, 3);
+    int year = 2025, month = 4;
+    LocalDate today = LocalDate.now();  // Get today's date
+    LocalDate firstDayOfMonth = LocalDate.of(year, month, 14);  //starting day (April 14th)
+
+    // Find the first Monday of the month for a clean start
+    int firstMondayOffset = (DayOfWeek.MONDAY.getValue() - firstDayOfMonth.getDayOfWeek().getValue() + 7) % 7;
+    LocalDate firstMonday = firstDayOfMonth.plusDays(firstMondayOffset);
+
+    // Generate appointments
+    for (int week = 0; week < 4; week++) {
+        // Rotate the physiotherapists for variety (Optional)
+        Collections.rotate(physiotherapists, 3);
 
         for (String day : weekdays) {
             int dayOffset = Arrays.asList(weekdays).indexOf(day);
@@ -167,32 +175,38 @@ public class PersonnelManager {
 
             Collections.shuffle(physiotherapists);
 
-            // Ensure that at least 3 physiotherapist work everyday
+            // Ensure at least 3 physiotherapists work every day
             List<Physiotherapist> workingPhysio = physiotherapists.subList(0, 3);
-//            int physioIndex = 0;
 
             for (String timeSlot : timeSlots) {
                 String[] times = timeSlot.split("-");
 
                 for (Physiotherapist physio : workingPhysio) {
-
                     String treatment = physio.getRandomTreatment(new Random());
-                   Date appointmentDate = new Date(year, month, actualDate.getDayOfMonth(), times[0], times[1]);
+                    Date appointmentDate = new Date(
+                            actualDate.getYear(),
+                            actualDate.getMonthValue(),
+                            actualDate.getDayOfMonth(),
+                            times[0],
+                            times[1]
+                    );
 
-                  // Create appointment and add it to physiotherapist timetable
-                  Appointment appointment = new Appointment("", physio, appointmentDate, treatment);
+                    // Create appointment and add it to physiotherapist timetable
+                    Appointment appointment = new Appointment("", physio, appointmentDate, treatment);
 
-                        Appointment.getAllAppointment().add(appointment);
+                    Appointment.getAllAppointment().add(appointment);
                     physio.getWorkingTimetable().add(appointment);
-                    }
-                }
                 }
             }
-        return new ArrayList<>(Appointment.getAllAppointment());  // return a copy
+        }
     }
 
+    return new ArrayList<>(Appointment.getAllAppointment());  // Return a copy of all appointments
+}
+
+
     public void displayPhysioTimetableByIDorFullName() {
-        System.out.println("Enter Physiotherapist's unique ID or full name:");
+        System.out.println("\u001B[35mEnter Physiotherapist's unique ID or full name: \u001B[0m");
         String inputString = input.nextLine();
         Physiotherapist physioToShow = findPhysiotherapistByIDOrName(inputString);
         if (physioToShow == null) {
@@ -221,20 +235,20 @@ public class PersonnelManager {
         }
         else {
             // get and display physiotherapist timetable
-            List<Appointment> bookedAppointment = physioToShow.getWorkingTimetable().stream().filter(appointment -> !appointment.getPatientID().isEmpty()).toList();
+            List<Appointment> bookedAppointment = physioToShow.getWorkingTimetable().stream().filter(appointment -> appointment.getPatientID() != null && !appointment.getPatientID().isEmpty()).toList();
 
             if (bookedAppointment.isEmpty()) {
                 System.out.println(physioToShow.getFullName() + " has no booked appointments.");
                 return;
             }
-            System.out.println("********Booked appointments for " + physioToShow.getFullName() + "***********:");
+            System.out.println("******** Booked appointments for " + physioToShow.getFullName() + " ***********:");
             int appointmentCounter = 1;
 
             for (Appointment appointment : bookedAppointment) {
                 Patient patient =  findPatientByID(appointment.getPatientID());
                 String patientName = (patient != null) ? patient.getFullName() : "Unknown Patient";
 
-                System.out.println(appointmentCounter + "." + patientName + " - "  + appointment.getTreatment() + " on " + appointment.getDate());
+                System.out.println(appointmentCounter + ". " + patientName + " - "  + appointment.getTreatment() + " on " + appointment.getDate());
                 appointmentCounter++;
             }
         }
@@ -242,7 +256,7 @@ public class PersonnelManager {
 
     public void printAppointmentReport() {
         for (Physiotherapist physio : physioList) {
-            System.out.println("\nPhysiotherapist: " + physio.getFullName());
+            System.out.println("\n\u001B[35mPhysiotherapist: " + physio.getFullName() + "\u001B[0m");
 
             List<Appointment> appointments = physio.getWorkingTimetable();
 
@@ -251,7 +265,7 @@ public class PersonnelManager {
                     continue; // Skip the AVAILABLE status
                 }
 
-                System.out.println("\n" + status + " appointments:");
+                System.out.println("\u001B[35m\n" + status + " appointments: \u001B[0m");
 
                 // Filter appointments based on the given status (Booked, Cancelled, or Attended)
                 List<Appointment> filteredAppointments = appointments.stream()
@@ -271,7 +285,7 @@ public class PersonnelManager {
                         System.out.println();
                     }
                 } else {
-                    System.out.println("  No " + status + " appointments found.");
+                    System.out.println(" No " + status + " appointments found.");
                 }
             }
         }

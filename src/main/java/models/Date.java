@@ -15,6 +15,10 @@ public class Date
         this.endTime = endTime;
     }
 
+    public LocalDate getLocalDate() {
+        return date;
+    }
+
     // Get suffix for the day (1st, 2nd, 3rd, etc.)
     private String getDaySuffix(int day) {
         if (day >= 11 && day <= 13) {

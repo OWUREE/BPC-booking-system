@@ -15,7 +15,7 @@ public class Patient extends Personnel {
 
     // to display a patient's info
     public void displayPatientInfo() {
-        System.out.println("********Patient Details ******* \n ");
+        System.out.println("\u001B[35m******** Patient Details ******* \u001B[0m");
         System.out.println(this);
     }
 

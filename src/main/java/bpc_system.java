@@ -1,3 +1,4 @@
+import java.time.LocalDate;
 import java.util.*;
 
 import models.Appointment;
@@ -128,7 +129,7 @@ public class bpc_system {
                                         case 4: {
                                             Appointment selectedAppointment = handleFindAndSelectAppointment(system, "attend");
                                             if (selectedAppointment != null) {
-                                                selectedAppointment.attendAnAppointment();
+                                                selectedAppointment.attendAppointment();
                                             }
                                             break;
                                         }
@@ -167,6 +168,8 @@ public class bpc_system {
                             break;
                         case 3:
                             break;
+                        default:
+                            System.out.println("Invalid choice. Try again.");
                     }
                     break;
                 }
@@ -213,6 +216,7 @@ public class bpc_system {
                                     return;
 
                                 default:
+                                    System.out.println("Invalid choice. Try again.");
                             }
                         }
                         break;
@@ -259,13 +263,19 @@ public class bpc_system {
             System.out.println((i + 1) + ". " + availableAppointments.get(i));
         }
 
-        System.out.print("\nSelect an appointment to book (enter the number): ");
+        System.out.print("\u001B[35m\nSelect an appointment to book (enter the number): \u001B[0m");
         int appointmentChoice = system.input.nextInt();
         system.input.nextLine();
 
         if (appointmentChoice > 0 && appointmentChoice <= availableAppointments.size()) {
             Appointment selectedAppointment = availableAppointments.get(appointmentChoice - 1);
             System.out.println("You selected: " + selectedAppointment);
+
+            LocalDate appointmentDay = selectedAppointment.getDate().getLocalDate();
+            if (appointmentDay.isBefore(LocalDate.now())) {
+                System.out.println("You cannot book an appointment in the past! Please select a future appointment.");
+                return; // Stop further booking process if the appointment is in the past
+            }
 
             // Prompt for unique patient ID
             System.out.print("Enter your patient ID: ");
@@ -285,7 +295,7 @@ public class bpc_system {
     }
 
     private static void promptPatientIDForBookings(bpc_system system) {
-        System.out.println("Please enter your patient ID:");
+        System.out.println("\u001B[35mPlease enter your patient ID:\u001B[0m");
 
         String patientID = system.input.nextLine();
 
@@ -299,7 +309,7 @@ public class bpc_system {
         for (int i = 0; i < expertiseList.size(); i++) {
             System.out.println((i + 1) + ". " + expertiseList.get(i).getExpertiseName());
         }
-        System.out.print("Select expertise to book an appointment: ");
+        System.out.print("\u001B[35mSelect expertise to book an appointment: \u001B[0m");
         int expertiseChoice = system.input.nextInt();
         system.input.nextLine();
 
@@ -342,9 +352,10 @@ public class bpc_system {
             if (bookings.isEmpty()) {
                 System.out.println("No appointments found for patient ID: " + patientID);
             } else {
-                System.out.println("Appointments for patient ID " + patientID + ":");
+                System.out.println("\u001B[35mAppointments for patient ID " + patientID + ":\u001B[0m");
                     for (int i = 0; i<bookings.size(); i++) {
-                        System.out.println((i + 1) + ". " + bookings.get(i));
+                        Appointment appointment = bookings.get(i);
+                        System.out.println((i + 1) + ". " + appointment + " [" + appointment.getStatus() + "]");
                     }
             }
         }else {
@@ -353,7 +364,7 @@ public class bpc_system {
     }
 
     private static Appointment handleFindAndSelectAppointment(bpc_system system, String action) { // action is either to update or to cancel
-        System.out.println("Please enter your patient ID:");
+        System.out.println("\u001B[35mPlease enter your patient ID:\u001B[0m");
         String patientID = system.input.nextLine();
         Patient patient = system.personnel.findPatientByID(patientID);
 
@@ -371,7 +382,8 @@ public class bpc_system {
 
         System.out.println("Appointments for patient ID " + patientID + ":");
         for (int i = 0; i < bookings.size(); i++) {
-            System.out.println((i + 1) + ". " + bookings.get(i));
+            Appointment appointment = bookings.get(i);
+            System.out.println((i + 1) + ". " + appointment + " [" + appointment.getStatus() + "]");
         }
 
         System.out.print("Select an appointment to " + action + " (enter number): ");
@@ -393,7 +405,7 @@ public class bpc_system {
             System.out.print("Enter full name of the new patient: ");
             fullName = input.nextLine();
             if (fullName == null || fullName.trim().isEmpty()) {
-                System.out.println("Full name cannot be empty. Please try again.");
+                System.out.println("\u001B[31mFull name cannot be empty. Please try again.\u001B[0m");
             } else {
                 break;
             }
@@ -404,7 +416,7 @@ public class bpc_system {
             System.out.print("Enter address of the new patient: ");
             address = input.nextLine();
             if (address == null || address.trim().isEmpty()) {
-                System.out.println("Address cannot be empty. Please try again.");
+                System.out.println("\u001B[31mAddress cannot be empty. Please try again.\u001B[0m");
             } else {
                 break;
             }
@@ -416,7 +428,7 @@ public class bpc_system {
             System.out.print("Enter telephone number of the new patient: ");
             telephoneNumber = input.nextLine();
             if (telephoneNumber == null || telephoneNumber.trim().isEmpty()) {
-                System.out.println("Telephone number cannot be empty. Please try again.");
+                System.out.println("\u001B[31mTelephone number cannot be empty. Please try again. \u001B[0m");
             } else if (!telephoneNumber.matches("^\\+?\\d+$")) { // Regular expression for valid phone number
                 System.out.println("Telephone number must contain only digits.");
             } else {

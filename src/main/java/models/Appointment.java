@@ -2,6 +2,7 @@ package models;
 
 import services.uniqueID_generator;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -34,8 +35,7 @@ public class Appointment {
 
     @Override
     public String toString() {
-       String status = isBooked() ? "(Booked)" : "(Available)";
-        return treatment + " with " + physio.getFullName() + " on " + date + " ";
+        return "ID: " + ID +  " | " + treatment + " with " + physio.getFullName() + " on " + date + " ";
     }
 
     public void setPatientID(String patientID) {
@@ -65,37 +65,55 @@ public class Appointment {
     }
 
     // Appointment Management
+
+    public static Appointment findAppointmentByID(int id) {
+        for (Appointment appointment : Appointment.getAllAppointment()) {
+            if (appointment.getID() == id) {
+                return appointment;
+            }
+        }
+        return null;
+    }
+
     public void bookAnAppointment(Patient patient) {
-        if (this.isBooked()) {
-            System.out.println("Oops, this appointment has already been booked");
-        } else if (patientHasConflictingAppointments(patient)) {
-            System.out.println("Oops, you already have an appointment at this time on this day. Please choose a different time.");
+        LocalDate appointmentDay = this.getDate().getLocalDate();
+        if (appointmentDay.isBefore(LocalDate.now())) {
+            System.out.println("You cannot book an appointment in the past!");
+        }
+        else if (this.isBooked()) {
+            System.out.println("\u001B[35mOops, this appointment has already been booked \u001B[0m");
+        } else if (patientHasConflict(patient)) {
+            System.out.println("\u001B[35mOops, you already have an appointment at this time on this day. Please choose a different time.\u001B[0m");
         } else {
             this.setPatientID(patient.getUniqueID());
             this.status = AppointmentStatus.BOOKED;
-            System.out.println(this + "successfully booked for " + patient.getFullName() + "!");
+            System.out.println("\u001B[35m" + this + "successfully booked for " + patient.getFullName() + "!\u001B[0m");
         }
 
     }
 
     public void cancelABooking() {
         if(this.status != AppointmentStatus.BOOKED) {
-            System.out.println("This appointment is not currently booked");
+            System.out.println("\u001B[35mThis appointment is not currently booked \u001B[0m");
         }
         else {
-            this.patientID = null;
+
             this.status = AppointmentStatus.CANCELED;
             canceledAppointments.add(this);
-            System.out.println(this + "successfully canceled.");
+            System.out.println("\u001B[35m" + this + "successfully canceled. \u001B[0m");
         }
     }
 
-    public void attendAnAppointment() {
-                this.status = AppointmentStatus.ATTENDED;
-            System.out.println("Appointment with " +this.physio.getFullName() + " on " +this.date + " has been marked as attended." );
+    public void attendAppointment() {
+        if (this.status == AppointmentStatus.CANCELED) {
+            System.out.println("\u001B[35mYou cannot attend a canceled appointment.\u001B[0m");
+        } else {
+            this.status = AppointmentStatus.ATTENDED;
+            System.out.println("\u001B[35mAppointment with " + this.physio.getFullName() + " on " + this.date + " has been marked as attended.\u001B[0m");
         }
+    }
 
-    public boolean patientHasConflictingAppointments(Patient patient) {
+    public boolean patientHasConflict(Patient patient) {
         List<Appointment> patientAppointments = patient.getPatientBookings();
         for (Appointment appointment : patientAppointments) {
 
@@ -123,27 +141,29 @@ public class Appointment {
             return;
         }
 
-        System.out.println("Available " + treatmentName + " appointments:");
+        System.out.println("\u001B[35mAvailable " + treatmentName + " appointments: \u001B[0m");
         for (int i = 0; i < availableAppointments.size(); i++) {
-            System.out.println((i + 1) + ". " + availableAppointments.get(i));
+            Appointment a = availableAppointments.get(i);
+            System.out.println((i + 1) + ". " + a);
         }
 
-        System.out.print("Select a new appointment (enter number): ");
-        int newAppointmentChoice = input.nextInt();
+        System.out.print("\u001B[35mEnter an Appointment ID to book: \u001B[0m");
+        int newAppointmentID = input.nextInt();
         input.nextLine();
 
-        if (newAppointmentChoice <= 0 || newAppointmentChoice > availableAppointments.size()) {
+        Appointment newAppointment = Appointment.findAppointmentByID(newAppointmentID);
+
+        if (newAppointment == null || newAppointment.isBooked()) {
             System.out.println("Invalid selection. Try again.");
             return;
         }
 
-        Appointment newAppointment = availableAppointments.get(newAppointmentChoice - 1);
+
 
         // Cancel old appointment and book the new one
         currentAppointment.cancelABooking();
         newAppointment.bookAnAppointment(patient);
 
-//        System.out.println("Your appointment has been updated to: " + newAppointment);
     }
 
     public static List<Appointment> getAppointmentByExpertise(String expertiseName) {

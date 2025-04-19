@@ -2,6 +2,8 @@ import models.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AppointmentTest {
@@ -48,5 +50,16 @@ public class AppointmentTest {
         assertEquals(AppointmentStatus.AVAILABLE, instance.getStatus());
     }
 
+    @Test
+    void testBookAppointment_pastDate() {
+        LocalDate yesterday = LocalDate.now().minusDays(1);
+        models.Date pastDate = new models.Date(yesterday.getYear(), yesterday.getMonthValue(), yesterday.getDayOfMonth(), "9:00", "10:00");
 
+        instance = new Appointment(null, mockPhysio, pastDate, "Massage");
+        instance.bookAnAppointment(mockPatient);
+
+        // Should remain available
+        assertEquals(AppointmentStatus.AVAILABLE, instance.getStatus());
+        assertNull(instance.getPatientID());
+    }
 }
