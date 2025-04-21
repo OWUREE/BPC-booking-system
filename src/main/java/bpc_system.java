@@ -14,9 +14,10 @@ public class bpc_system {
 
     public static void main(String[] args) {
         bpc_system system = new bpc_system();
-        system.personnel.createAppointment(); // the createAppointment method needs to be called for appointments to be created
+        system.createAppointmentsForBooking(); // the createAppointment method needs to be called for appointments to be created
 
-        while (true) {
+        boolean running = true;
+        while (running) {
             System.out.println("\u001B[35mWELCOME TO THE BPC APPOINTMENT BOOKING SYSTEM \u001B[0m");
             System.out.println("\nMENU: ");
             System.out.println("1. Patient");
@@ -249,12 +250,25 @@ public class bpc_system {
                 break;
             }
                 case 4:
-                    system.exitProgram();
-                    return;
-
+                    running = false;
+                    System.out.println("Exiting program... Goodbye!");
+                    break;
                 default:
                     System.out.println("Invalid choice. Try again.");
             }
+        }
+        system.exitProgram();
+    }
+
+    private void createAppointmentsForBooking() {
+        LocalDate startDate = LocalDate.of(2025, 4, 14); // Set the desired start date
+        List<Appointment> availableAppointments = personnel.createAppointments(startDate);
+
+        // Display available appointments
+        if (availableAppointments.isEmpty()) {
+            System.out.println("No available appointments for the selected date range.");
+        } else {
+            System.out.println("Appointments generated successfully.");
         }
     }
 
@@ -443,7 +457,6 @@ public class bpc_system {
 
     public void exitProgram() {
         input.close();
-        System.out.println("Exiting program... Goodbye!");
         System.exit(0);
     }
 }

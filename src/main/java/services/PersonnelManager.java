@@ -3,12 +3,11 @@ package services;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import models.*;
 import models.Date;
 
-public class PersonnelManager {
+public class PersonnelManager implements AppointmentFactory {
 
     private List<Patient> patientList = new ArrayList<>();
     private List<Physiotherapist> physioList = new ArrayList<>();
@@ -143,67 +142,6 @@ public class PersonnelManager {
     }
 
 
-public List<Appointment> createAppointment() {
-
-    Appointment.getAllAppointment().clear(); // Clear existing appointments to avoid duplicates
-
-    String[] weekdays = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
-    String[] timeSlots = {"09:00-10:00", "10:30-11:30", "11:30-12:30", "14:00-15:00", "15:00-16:00", "16:00-17:00"};
-
-    List<Physiotherapist> physiotherapists = getPhysioList();
-
-    for (Physiotherapist physio : physiotherapists) {
-        physio.getWorkingTimetable().clear();
-    }
-
-    int year = 2025, month = 4;
-    LocalDate today = LocalDate.now();  // Get today's date
-    LocalDate firstDayOfMonth = LocalDate.of(year, month, 14);  //starting day (April 14th)
-
-    // Find the first Monday of the month for a clean start
-    int firstMondayOffset = (DayOfWeek.MONDAY.getValue() - firstDayOfMonth.getDayOfWeek().getValue() + 7) % 7;
-    LocalDate firstMonday = firstDayOfMonth.plusDays(firstMondayOffset);
-
-    // Generate appointments
-    for (int week = 0; week < 4; week++) {
-        // Rotate the physiotherapists for variety (Optional)
-        Collections.rotate(physiotherapists, 3);
-
-        for (String day : weekdays) {
-            int dayOffset = Arrays.asList(weekdays).indexOf(day);
-            LocalDate actualDate = firstMonday.plusWeeks(week).plusDays(dayOffset);
-
-            Collections.shuffle(physiotherapists);
-
-            // Ensure at least 3 physiotherapists work every day
-            List<Physiotherapist> workingPhysio = physiotherapists.subList(0, 3);
-
-            for (String timeSlot : timeSlots) {
-                String[] times = timeSlot.split("-");
-
-                for (Physiotherapist physio : workingPhysio) {
-                    String treatment = physio.getRandomTreatment(new Random());
-                    Date appointmentDate = new Date(
-                            actualDate.getYear(),
-                            actualDate.getMonthValue(),
-                            actualDate.getDayOfMonth(),
-                            times[0],
-                            times[1]
-                    );
-
-                    // Create appointment and add it to physiotherapist timetable
-                    Appointment appointment = new Appointment("", physio, appointmentDate, treatment);
-
-                    Appointment.getAllAppointment().add(appointment);
-                    physio.getWorkingTimetable().add(appointment);
-                }
-            }
-        }
-    }
-
-    return new ArrayList<>(Appointment.getAllAppointment());  // Return a copy of all appointments
-}
-
 
     public void displayPhysioTimetableByIDorFullName() {
         System.out.println("\u001B[35mEnter Physiotherapist's unique ID or full name: \u001B[0m");
@@ -328,4 +266,63 @@ public List<Appointment> createAppointment() {
         return patientList;
     }
 
-}
+    @Override
+    public List<Appointment> createAppointments(LocalDate startDate) {
+
+            Appointment.getAllAppointment().clear(); // Clear existing appointments to avoid duplicates
+
+            String[] weekdays = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
+            String[] timeSlots = {"09:00-10:00", "10:30-11:30", "11:30-12:30", "14:00-15:00", "15:00-16:00", "16:00-17:00"};
+
+            List<Physiotherapist> physiotherapists = getPhysioList();
+
+            for (Physiotherapist physio : physiotherapists) {
+                physio.getWorkingTimetable().clear();
+            }
+
+            LocalDate firstDay = startDate;  //starting day (April 14th)
+
+            // Find the first Monday of the month for a clean start
+            int offset = (DayOfWeek.MONDAY.getValue() - firstDay.getDayOfWeek().getValue() + 7) % 7;
+            LocalDate firstMonday = firstDay.plusDays(offset);
+
+            // Generate appointments
+            for (int week = 0; week < 4; week++) {
+                // Rotate the physiotherapists for variety (Optional)
+                Collections.rotate(physiotherapists, 3);
+
+                for (String day : weekdays) {
+                    int dayOffset = Arrays.asList(weekdays).indexOf(day);
+                    LocalDate actualDate = firstMonday.plusWeeks(week).plusDays(dayOffset);
+
+                    Collections.shuffle(physiotherapists);
+
+                    // Ensure at least 3 physiotherapists work every day
+                    List<Physiotherapist> workingPhysio = physiotherapists.subList(0, 3);
+
+                    for (String timeSlot : timeSlots) {
+                        String[] times = timeSlot.split("-");
+
+                        for (Physiotherapist physio : workingPhysio) {
+                            String treatment = physio.getRandomTreatment(new Random());
+                            Date appointmentDate = new Date(
+                                    actualDate.getYear(),
+                                    actualDate.getMonthValue(),
+                                    actualDate.getDayOfMonth(),
+                                    times[0],
+                                    times[1]
+                            );
+
+                            // Create appointment and add it to physiotherapist timetable
+                            Appointment appointment = new Appointment("", physio, appointmentDate, treatment);
+
+                            Appointment.getAllAppointment().add(appointment);
+                            physio.getWorkingTimetable().add(appointment);
+                        }
+                    }
+                }
+            }
+
+            return new ArrayList<>(Appointment.getAllAppointment());  // Return a copy of all appointments
+        }
+    }
