@@ -280,13 +280,12 @@ public class PersonnelManager implements AppointmentFactory {
                 physio.getWorkingTimetable().clear();
             }
 
-            LocalDate firstDay = startDate;  //starting day (April 14th)
+            LocalDate firstDay = startDate;
 
             // Find the first Monday of the month for a clean start
             int offset = (DayOfWeek.MONDAY.getValue() - firstDay.getDayOfWeek().getValue() + 7) % 7;
             LocalDate firstMonday = firstDay.plusDays(offset);
 
-            // Generate appointments
             for (int week = 0; week < 4; week++) {
                 // Rotate the physiotherapists for variety (Optional)
                 Collections.rotate(physiotherapists, 3);

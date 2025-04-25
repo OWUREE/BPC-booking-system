@@ -1,3 +1,5 @@
+package view;
+
 import java.time.LocalDate;
 import java.util.*;
 
@@ -261,7 +263,7 @@ public class bpc_system {
     }
 
     private void createAppointmentsForBooking() {
-        LocalDate startDate = LocalDate.of(2025, 4, 14); // Set the desired start date
+        LocalDate startDate = LocalDate.of(2025, 4, 21);
         List<Appointment> availableAppointments = personnel.createAppointments(startDate);
 
         // Display available appointments

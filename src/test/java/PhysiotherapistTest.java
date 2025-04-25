@@ -26,7 +26,6 @@ public class PhysiotherapistTest {
         for (Appointment appointment : timetable) {
             assertEquals("Jane Smith", appointment.getPhysiotherapist().getFullName());
 
-            // Check that treatment is from physiotherapist's expertise list
             List<String> validTreatments = Arrays.asList(expertise.getTreatmentList());
             assertTrue(validTreatments.contains(appointment.getTreatment()), "Treatment should contain expertise list");
 
