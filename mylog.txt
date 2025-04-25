@@ -1,0 +1,103 @@
+commit 8221e83e695812c2607437a54255565e17e0cc5a
+Merge: 4d2eb4a 4a85bea
+Author: Hanifat Owuri <neefah300@gmail.com>
+Date:   Fri Apr 25 13:19:22 2025 +0100
+
+    Merge branch 'main' of https://github.com/OWUREE/BPC-booking-system
+    Added a README.md file
+
+commit 4d2eb4a0159ae9eb7b39fccc08e178b49f46df97
+Author: Hanifat Owuri <neefah300@gmail.com>
+Date:   Fri Apr 25 13:09:11 2025 +0100
+
+    updates made
+
+commit 4a85beaa4002f0ddb9eb8c21a6c02e466c756f4f
+Author: OWUREE <49628348+OWUREE@users.noreply.github.com>
+Date:   Fri Apr 25 12:07:17 2025 +0100
+
+    Create README.md
+
+commit a148126a61d761d7ccddee10c4567009c5827389
+Author: Hanifat Owuri <neefah300@gmail.com>
+Date:   Fri Apr 25 11:46:05 2025 +0100
+
+    Updated code and packaged JAR file
+
+commit 40dc21ee1f041887f51cba8aa5a5df1cd6cbc251
+Author: Hanifat Owuri <neefah300@gmail.com>
+Date:   Mon Apr 21 13:52:40 2025 +0100
+
+    created AppointmentFactory interface, modified createAppointment method
+
+commit 9a7048a459dcd617de2ae68b0fa665505aeedc82
+Author: Hanifat Owuri <neefah300@gmail.com>
+Date:   Sat Apr 19 17:43:15 2025 +0100
+
+    updated PhysiotherapistTest class
+
+commit cffa988eab1e55a4e32bcf006c80051613d7c1ee
+Author: Hanifat Owuri <neefah300@gmail.com>
+Date:   Sat Apr 19 17:31:15 2025 +0100
+
+    updates made to the appointment and personnelManager class
+
+commit cf383e2e29cbb6667f2f767605f2083664b9387c
+Author: Hanifat Owuri <neefah300@gmail.com>
+Date:   Sun Apr 13 12:30:42 2025 +0100
+
+    created test classes for Appointment, Patient, Physiotherapist, PersonnelManager, and Date classes. Implemented test-cases and got the tests to pass
+
+commit 88a6c1fac69e0d800500402c74c9b69b4a35c9a0
+Author: Hanifat Owuri <neefah300@gmail.com>
+Date:   Thu Apr 10 17:46:22 2025 +0100
+
+    Moved project from IntelliJ's default setup to Maven setup. Configured POM file, set up project structure
+
+commit 6b0a6ac85696d5b4515a34d849e7d101f70c3be7
+Author: Hanifat Owuri <neefah300@gmail.com>
+Date:   Mon Mar 31 11:47:55 2025 +0100
+
+    created AppointmentStatus enum, implemented print report for admin, implemented the runner class
+
+commit 5136ba2c5617ea217ceb628c3ea9c961967e85de
+Author: Hanifat Owuri <neefah300@gmail.com>
+Date:   Wed Mar 12 13:38:51 2025 +0000
+
+    implemented book-appointment, update-appointment, and cancel-appointment logic for patient
+
+commit 9e5ec1c6c9bbe1d7bd2abf2f7c422eaa19de7384
+Author: Hanifat Owuri <neefah300@gmail.com>
+Date:   Sat Mar 8 17:25:55 2025 +0000
+
+    multiple changes implemented - refactoring
+
+commit 8605fb2b4d77fea7a8a8bd4df15ee4d888304378
+Author: Hanifat Owuri <neefah300@gmail.com>
+Date:   Sat Mar 8 03:24:56 2025 +0000
+
+    implemented timetable, add appointments to timetable
+
+commit 45668d381dfe0ea117d958d867d0275353a58843
+Author: Hanifat Owuri <neefah300@gmail.com>
+Date:   Sun Mar 2 00:04:07 2025 +0000
+
+    added a date and an appointment class, encountered some errors with the date
+
+commit 82cf4dc4fe488871f40e6bcc192a0c6cb32c05fb
+Author: Hanifat Owuri <neefah300@gmail.com>
+Date:   Tue Feb 25 12:36:47 2025 +0000
+
+    refactoring-created personnel class: inherited by the Physiotherapist and Patient class
+
+commit b101fe1d3e32bc5faf5ebf0b38b7c72e6621b7d2
+Author: Hanifat Owuri <neefah300@gmail.com>
+Date:   Wed Feb 19 06:12:42 2025 +0000
+
+    added methods to add and remove patients
+
+commit a5beb3ecf69474af9dbd0f84157c00e6abc819ab
+Author: Hanifat Owuri <neefah300@gmail.com>
+Date:   Fri Feb 14 17:17:57 2025 +0000
+
+    initial commit -  created booking, patient, physiotherapist, treatment, bpc_system classes.
