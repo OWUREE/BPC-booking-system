@@ -1,0 +1,1 @@
+To run the program :  Navigate to the target directory in the command line and enter "java -jar bpc-system-1.0-SNAPSHOT.jar". Alternatively, you can right click on the bpc-system-1.0-SNAPSHOT.jar file inside the target directory and click "run"
